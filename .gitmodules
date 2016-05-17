@@ -1,0 +1,6 @@
+[submodule "inc/FastLED"]
+	path = inc/FastLED
+	url = git@github.com:FastLED/FastLED.git
+[submodule "inc/Adafruit_NeoPixel"]
+	path = inc/Adafruit_NeoPixel
+	url = git@github.com:adafruit/Adafruit_NeoPixel.git
