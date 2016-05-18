@@ -38,6 +38,7 @@
 								<option id="de.innot.avreclipse.compiler.option.optimize.1061043173" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.759157931" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/variants/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/SPI/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/HID/src}&quot;"/>
@@ -64,6 +65,7 @@
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.89756866" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.incpath.1036892086" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/FreeRTOS-Arduino/libraries/SdFat/src/SdSpiCard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/SoftwareSerial/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/SPI/src}&quot;"/>
@@ -107,9 +109,16 @@
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.objdump.app.debug.1878395534.663551981" name="Generate Extended Listing (Source + generated Assembler)" superClass="de.innot.avreclipse.toolchain.options.toolchain.objdump.app.debug.1878395534"/>
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.size.app.debug.1662292322.861245884" name="Print Size" superClass="de.innot.avreclipse.toolchain.options.toolchain.size.app.debug.1662292322"/>
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.avrdude.app.debug.1986574361.427854127" name="AVRDude" superClass="de.innot.avreclipse.toolchain.options.toolchain.avrdude.app.debug.1986574361"/>
-							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.debug.1605359002" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.debug.417838979"/>
-							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.debug.1284834608" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.debug.1000987082"/>
-							<tool id="de.innot.avreclipse.tool.cppcompiler.app.debug.440113930" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.debug.734057982"/>
+							<targetPlatform id="de.innot.avreclipse.targetplatform.winavr.app.debug" name="AVR Cross-Target" superClass="de.innot.avreclipse.targetplatform.winavr.app.debug"/>
+							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.debug.1605359002" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.debug.417838979">
+								<inputType id="de.innot.avreclipse.tool.assembler.input.1396837303" superClass="de.innot.avreclipse.tool.assembler.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.debug.1284834608" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.debug.1000987082">
+								<inputType id="de.innot.avreclipse.compiler.winavr.input.771177594" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.cppcompiler.app.debug.440113930" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.debug.734057982">
+								<inputType id="de.innot.avreclipse.cppcompiler.input.1294449592" superClass="de.innot.avreclipse.cppcompiler.input"/>
+							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.debug.1972104432" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.debug.1763161764"/>
 							<tool id="de.innot.avreclipse.tool.cpplinker.app.debug.509089244" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.debug.1956406666"/>
 							<tool id="de.innot.avreclipse.tool.archiver.winavr.base.422495850" name="AVR Archiver" superClass="de.innot.avreclipse.tool.archiver.winavr.base.1115773988"/>
@@ -451,9 +460,16 @@
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.objdump.app.release.1315625857.846319384" name="Generate Extended Listing (Source + generated Assembler)" superClass="de.innot.avreclipse.toolchain.options.toolchain.objdump.app.release.1315625857"/>
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.size.app.release.686881688.2042737080" name="Print Size" superClass="de.innot.avreclipse.toolchain.options.toolchain.size.app.release.686881688"/>
 							<option id="de.innot.avreclipse.toolchain.options.toolchain.avrdude.app.release.1158934108.2023484564" name="AVRDude" superClass="de.innot.avreclipse.toolchain.options.toolchain.avrdude.app.release.1158934108"/>
-							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.release.937824567" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.release.1680974738"/>
-							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.release.1064536025" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.release.2017813085"/>
-							<tool id="de.innot.avreclipse.tool.cppcompiler.app.release.1678927732" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.release.326126953"/>
+							<targetPlatform id="de.innot.avreclipse.targetplatform.winavr.app.release" name="AVR Cross-Target" superClass="de.innot.avreclipse.targetplatform.winavr.app.release"/>
+							<tool id="de.innot.avreclipse.tool.assembler.winavr.app.release.937824567" name="AVR Assembler" superClass="de.innot.avreclipse.tool.assembler.winavr.app.release.1680974738">
+								<inputType id="de.innot.avreclipse.tool.assembler.input.1734907012" superClass="de.innot.avreclipse.tool.assembler.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.compiler.winavr.app.release.1064536025" name="AVR Compiler" superClass="de.innot.avreclipse.tool.compiler.winavr.app.release.2017813085">
+								<inputType id="de.innot.avreclipse.compiler.winavr.input.203788263" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
+							</tool>
+							<tool id="de.innot.avreclipse.tool.cppcompiler.app.release.1678927732" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.release.326126953">
+								<inputType id="de.innot.avreclipse.cppcompiler.input.1231366335" superClass="de.innot.avreclipse.cppcompiler.input"/>
+							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.501904968" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release.631620215"/>
 							<tool id="de.innot.avreclipse.tool.cpplinker.app.release.169543841" name="AVR C++ Linker" superClass="de.innot.avreclipse.tool.cpplinker.app.release.1066390205"/>
 							<tool id="de.innot.avreclipse.tool.archiver.winavr.base.478925318" name="AVR Archiver" superClass="de.innot.avreclipse.tool.archiver.winavr.base.136811910"/>
