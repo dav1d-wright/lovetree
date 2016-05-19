@@ -3,7 +3,7 @@
 	url = git@github.com:FastLED/FastLED.git
 [submodule "inc/Adafruit_NeoPixel"]
 	path = inc/Adafruit_NeoPixel
-	url = git@github.com:adafruit/Adafruit_NeoPixel.git
+	url = git@github.com:nm4d/Adafruit_NeoPixel.git
 [submodule "inc/Arduino"]
 	path = inc/Arduino
 	url = git@github.com:arduino/Arduino.git
