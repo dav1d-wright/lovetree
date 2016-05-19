@@ -25,7 +25,7 @@
 #include "stdint.h"
 #include "Arduino.h"
 #include "Adafruit_NeoPixel.h"
-#include "FreeRTOS_AVR.h"
+#include "Arduino_FreeRTOS.h"
 
 #include "moveData.h"
 /*----------------------------------------------------------------------------*/
@@ -35,7 +35,7 @@
 /*----------------------------------------------------------------------------*/
 /* forward declarations */
 /*----------------------------------------------------------------------------*/
-void task(void* apvArgument);
+void runningTask(void* apvArgument);
 
 /*----------------------------------------------------------------------------*/
 /* globals */
@@ -62,15 +62,20 @@ TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_STRIPS];
 /*----------------------------------------------------------------------------*/
 void setup(void)
 {
+	/* Setup LED strips */
 	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_STRIPS; uStripIndex++)
 	{
 		g_cPixels[uStripIndex] = new Adafruit_NeoPixel(DF_MVDATA_NUM_LEDS_PER_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
 		g_cPixels[uStripIndex]->begin();
 	}
 
-	xTaskCreate(task, "example task", 1024, 0, 1, g_pvTaskHandles);
-	vTaskStartScheduler();
+	/* Setup serial communication for debug */
+	Serial.begin(9600);
+	Serial.println("Hello World from setup!");
 
+	/* Setup tasks */
+	xTaskCreate(runningTask, "example task", 1024, 0, 1, g_pvTaskHandles);
+	vTaskStartScheduler();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -97,10 +102,11 @@ void loop(void)
   }
 }
 
-void task(void* apvArgument)
+void runningTask(void* apvArgument)
 {
 	while(true)
 	{
-
+		Serial.println("Hello World from running task!");
+		vTaskDelay(100);
 	}
 }

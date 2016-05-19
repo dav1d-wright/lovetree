@@ -10,3 +10,6 @@
 [submodule "inc/Arduino"]
 	path = inc/Arduino
 	url = git@github.com:arduino/Arduino.git
+[submodule "inc/Arduino_FreeRTOS_Library"]
+	path = inc/Arduino_FreeRTOS_Library
+	url = git@github.com:feilipu/Arduino_FreeRTOS_Library.git
