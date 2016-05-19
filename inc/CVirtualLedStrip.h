@@ -27,23 +27,28 @@ private:
 	bool m_bIsRunning;
 	/*! \brief Length of this virtual strip (number of pixels). */
 	uint16_t m_uLength;
+	/*! \brief Current step in programme. */
+	uint16_t m_uCurrentStep;
+
 
 public:
 	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber=6, neoPixelType atPixelType=NEO_GRB + NEO_KHZ800);
 	~CVirtualLedStrip(void);
 
+	/* Overriden members from Adafruit_NeoPixel */
     virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue);
     virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue, uint8_t auWhite);
 	virtual void setPixelColor(uint16_t auPixelNumber, uint32_t auColour);
 	virtual void setBrightness(uint8_t auBrightness);
 	virtual void clear(void);
 	virtual void updateLength(uint16_t auLength);
-
     virtual uint8_t *getPixels(void) const;
-
     virtual uint16_t numPixels(void) const;
-
     virtual uint32_t getPixelColor(uint16_t auPixelNumber) const;
+
+    /* Programmes */
+    virtual void runShootingStar(void);
+    virtual bool isRunning(void);
 };
 
 

@@ -113,3 +113,13 @@ uint32_t CVirtualLedStrip::getPixelColor(uint16_t auPixelNumber) const
 {
 	return Adafruit_NeoPixel::getPixelColor(auPixelNumber + m_uOffset);
 }
+
+void CVirtualLedStrip::runShootingStar(void)
+{
+
+}
+
+bool CVirtualLedStrip::isRunning(void)
+{
+	return m_bIsRunning;
+}
