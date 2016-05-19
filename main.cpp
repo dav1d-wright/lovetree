@@ -25,12 +25,12 @@
 #include "stdint.h"
 #include "Arduino.h"
 #include "Adafruit_NeoPixel.h"
-#include "Arduino_FreeRTOS.h"
 
 #include "moveData.h"
 /*----------------------------------------------------------------------------*/
 /* defines */
 /*----------------------------------------------------------------------------*/
+#define F_CPU 16000000UL
 
 /*----------------------------------------------------------------------------*/
 /* forward declarations */
@@ -47,7 +47,6 @@ const uint8_t g_uPins[DF_MVDATA_NUM_STRIPS] = {0};
 /*! \brief Delay variable */
 uint16_t g_uDelayVal = 500U;
 /*! \brief task handles */
-TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_STRIPS];
 
 /*----------------------------------------------------------------------------*/
 /*!
@@ -72,10 +71,6 @@ void setup(void)
 	/* Setup serial communication for debug */
 	Serial.begin(9600);
 	Serial.println("Hello World from setup!");
-
-	/* Setup tasks */
-	xTaskCreate(runningTask, "example task", 1024, 0, 1, g_pvTaskHandles);
-	vTaskStartScheduler();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -98,15 +93,7 @@ void loop(void)
 	g_cPixels[0]->show(); // This sends the updated pixel color to the hardware.
 
 	delay(g_uDelayVal); // Delay for a period of time (in milliseconds).
+	Serial.println("Loop is still here.");
 
   }
-}
-
-void runningTask(void* apvArgument)
-{
-	while(true)
-	{
-		Serial.println("Hello World from running task!");
-		vTaskDelay(100);
-	}
 }
