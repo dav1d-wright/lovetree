@@ -38,6 +38,7 @@
 								<option id="de.innot.avreclipse.compiler.option.optimize.1061043173" name="Optimization Level" superClass="de.innot.avreclipse.compiler.option.optimize"/>
 								<option id="de.innot.avreclipse.compiler.option.incpath.759157931" name="Include Paths (-I)" superClass="de.innot.avreclipse.compiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/variants/standard}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino_FreeRTOS_Library/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/SPI/src}&quot;"/>
@@ -59,6 +60,7 @@
 								<option id="de.innot.avreclipse.cppcompiler.option.optimize.89756866" name="Optimization Level" superClass="de.innot.avreclipse.cppcompiler.option.optimize"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.incpath.1036892086" name="Include Paths (-I)" superClass="de.innot.avreclipse.cppcompiler.option.incpath" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino_FreeRTOS_Library/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/Wire/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/SoftwareSerial/src}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/libraries/SPI/src}&quot;"/>

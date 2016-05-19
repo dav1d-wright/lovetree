@@ -25,6 +25,7 @@
 #include "stdint.h"
 #include "Arduino.h"
 #include "Adafruit_NeoPixel.h"
+#include "Arduino_FreeRTOS.h"
 
 #include "moveData.h"
 /*----------------------------------------------------------------------------*/
@@ -47,6 +48,7 @@ const uint8_t g_uPins[DF_MVDATA_NUM_STRIPS] = {0};
 /*! \brief Delay variable */
 uint16_t g_uDelayVal = 500U;
 /*! \brief task handles */
+TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_STRIPS];
 
 /*----------------------------------------------------------------------------*/
 /*!
@@ -71,6 +73,13 @@ void setup(void)
 	/* Setup serial communication for debug */
 	Serial.begin(9600);
 	Serial.println("Hello World from setup!");
+
+	/* Setup tasks */
+	xTaskCreate(runningTask, "example task 1", 1024, 0, 1, g_pvTaskHandles);
+//	xTaskCreate(runningTask, "example task 2", 1024, 0, 1, g_pvTaskHandles);
+//	xTaskCreate(runningTask, "example task 3", 1024, 0, 1, g_pvTaskHandles);
+//	xTaskCreate(runningTask, "example task 4", 1024, 0, 1, g_pvTaskHandles);
+	vTaskStartScheduler();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -96,4 +105,25 @@ void loop(void)
 	Serial.println("Loop is still here.");
 
   }
+}
+
+void runningTask(void* apvArgument)
+{
+	static uint32_t s_uLastEnterTime;
+	static TickType_t s_tLastWakeTicks;
+	uint32_t uCurrentEnterTime;
+	uint32_t uTimeElapsed;
+	char cTimeString[256] = {0};
+	s_uLastEnterTime = millis();
+
+	while(true)
+	{
+		s_tLastWakeTicks = xTaskGetTickCount();
+		uCurrentEnterTime = millis();
+		uTimeElapsed = uCurrentEnterTime - s_uLastEnterTime;
+		sprintf(cTimeString, "Timediff: %u ms.", uTimeElapsed);
+		Serial.println(cTimeString);
+		s_uLastEnterTime = uCurrentEnterTime;
+		vTaskDelayUntil(&s_tLastWakeTicks, 1);
+	}
 }
