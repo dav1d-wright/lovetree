@@ -22,12 +22,13 @@
 /*----------------------------------------------------------------------------*/
 /* includes */
 /*----------------------------------------------------------------------------*/
-#include "stdint.h"
-#include "Arduino.h"
-#include "Adafruit_NeoPixel.h"
-#include "Arduino_FreeRTOS.h"
+#include <stdint.h>
+#include <Arduino.h>
+#include <Adafruit_NeoPixel.h>
+#include <Arduino_FreeRTOS.h>
 
-#include "moveData.h"
+#include <CVirtualLedStrip.h>
+#include <moveData.h>
 /*----------------------------------------------------------------------------*/
 /* defines */
 /*----------------------------------------------------------------------------*/
