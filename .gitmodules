@@ -4,9 +4,6 @@
 [submodule "inc/Adafruit_NeoPixel"]
 	path = inc/Adafruit_NeoPixel
 	url = git@github.com:adafruit/Adafruit_NeoPixel.git
-[submodule "inc/FreeRTOS-Arduino"]
-	path = inc/FreeRTOS-Arduino
-	url = https://github.com/nm4d/FreeRTOS-Arduino
 [submodule "inc/Arduino"]
 	path = inc/Arduino
 	url = git@github.com:arduino/Arduino.git
