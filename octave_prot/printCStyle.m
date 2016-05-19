@@ -17,13 +17,13 @@
 ## Created: 2016-05-18
 
 function printCStyle (matrix, maxAfterGlow, numLeds, stepDelay)
-	fIdCpp = fopen("../src/moveData.cpp", "w");
+	fIdCpp = fopen("../src/MoveData.cpp", "w");
 	
 	fwrite(fIdCpp, "#include \"stdint.h\"\n");
 	fwrite(fIdCpp, "#include <avr/pgmspace.h>\n");
-	fwrite(fIdCpp, "#include \"moveData.h\"\n\n");
+	fwrite(fIdCpp, "#include \"MoveData.h\"\n\n");
 
-	matString = "const uint8_t g_uLightIntensityMat\n[DF_MVDATA_NUM_LEDS_PER_STRIP + DF_MVDATA_MAX_AFTERGLOW][DF_MVDATA_NUM_LEDS_PER_STRIP + DF_MVDATA_MAX_AFTERGLOW] PROGMEM = {\n";
+	matString = "const uint8_t g_uLightIntensityMat\n[DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW][DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW] PROGMEM = {\n";
 	
 	fwrite(fIdCpp, matString);
 
@@ -40,7 +40,7 @@ function printCStyle (matrix, maxAfterGlow, numLeds, stepDelay)
 	end
 	fwrite(fIdCpp, "};\n\n");
 	
-	arrString = "const uint8_t g_uStepDelays[DF_MVDATA_NUM_LEDS_PER_STRIP + DF_MVDATA_MAX_AFTERGLOW] PROGMEM = {";
+	arrString = "const uint8_t g_uStepDelays[DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW] PROGMEM = {";
 	
 	fwrite(fIdCpp, arrString);
 	

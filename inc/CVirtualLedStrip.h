@@ -21,32 +21,29 @@
 class CVirtualLedStrip: public Adafruit_NeoPixel
 {
 private:
-	uint8_t m_uOffset;
+	/*! \brief Offset from pixel number zero of the physical strip. */
+	uint16_t m_uOffset;
+	/*! \brief TRUE if an LED programme is running. */
+	bool m_bIsRunning;
+	/*! \brief Length of this virtual strip (number of pixels). */
+	uint16_t m_uLength;
 
 public:
-	CVirtualLedStrip(uint8_t auOffset, uint16_t n, uint8_t p=6, neoPixelType t=NEO_GRB + NEO_KHZ800);
+	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber=6, neoPixelType atPixelType=NEO_GRB + NEO_KHZ800);
 	~CVirtualLedStrip(void);
 
-    virtual void begin(void);
-    virtual void show(void);
-    virtual void setPin(uint8_t p);
-    virtual void setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b);
-    virtual void setPixelColor(uint16_t n, uint8_t r, uint8_t g, uint8_t b, uint8_t w);
-	virtual void setPixelColor(uint16_t n, uint32_t c);
-	virtual void setBrightness(uint8_t);
+    virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue);
+    virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue, uint8_t auWhite);
+	virtual void setPixelColor(uint16_t auPixelNumber, uint32_t auColour);
+	virtual void setBrightness(uint8_t auBrightness);
 	virtual void clear(void);
-	virtual void updateLength(uint16_t n);
-	virtual void updateType(neoPixelType t);
+	virtual void updateLength(uint16_t auLength);
 
     virtual uint8_t *getPixels(void) const;
-    virtual uint8_t getBrightness(void) const;
 
     virtual uint16_t numPixels(void) const;
 
-    virtual uint32_t Color(uint8_t r, uint8_t g, uint8_t b);
-    virtual uint32_t Color(uint8_t r, uint8_t g, uint8_t b, uint8_t w);
-
-    virtual uint32_t getPixelColor(uint16_t n) const;
+    virtual uint32_t getPixelColor(uint16_t auPixelNumber) const;
 };
 
 

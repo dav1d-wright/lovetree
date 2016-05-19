@@ -23,12 +23,12 @@
 /* includes */
 /*----------------------------------------------------------------------------*/
 #include <stdint.h>
-#include <Arduino.h>
+//#include <Arduino.h>
 #include <Adafruit_NeoPixel.h>
 #include <Arduino_FreeRTOS.h>
 
 #include <CVirtualLedStrip.h>
-#include <moveData.h>
+#include <MoveData.h>
 /*----------------------------------------------------------------------------*/
 /* defines */
 /*----------------------------------------------------------------------------*/
@@ -43,13 +43,13 @@ void runningTask(void* apvArgument);
 /* globals */
 /*----------------------------------------------------------------------------*/
 /*! \brief WS2812 strip object */
-Adafruit_NeoPixel* g_cPixels[DF_MVDATA_NUM_STRIPS];
+CVirtualLedStrip* g_cPixels[DF_MVDATA_NUM_VIRTUAL_STRIPS];
 /*! \brief WS2812 strip object */
-const uint8_t g_uPins[DF_MVDATA_NUM_STRIPS] = {0};
+const uint8_t g_uPins[DF_MVDATA_NUM_VIRTUAL_STRIPS] = {0};
 /*! \brief Delay variable */
 uint16_t g_uDelayVal = 500U;
 /*! \brief task handles */
-TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_STRIPS];
+TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_VIRTUAL_STRIPS];
 
 /*----------------------------------------------------------------------------*/
 /*!
@@ -65,9 +65,9 @@ TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_STRIPS];
 void setup(void)
 {
 	/* Setup LED strips */
-	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_STRIPS; uStripIndex++)
+	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
 	{
-		g_cPixels[uStripIndex] = new Adafruit_NeoPixel(DF_MVDATA_NUM_LEDS_PER_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
+		g_cPixels[uStripIndex] = new CVirtualLedStrip(DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
 		g_cPixels[uStripIndex]->begin();
 	}
 
@@ -96,7 +96,7 @@ void setup(void)
 /*----------------------------------------------------------------------------*/
 void loop(void)
 {
-  for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_STRIP; uLoop++){
+  for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++){
 	// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
 	g_cPixels[0]->setPixelColor(uLoop, g_uLightIntensityMat[0][uLoop], g_uLightIntensityMat[0][uLoop], g_uLightIntensityMat[0][uLoop]);
 
