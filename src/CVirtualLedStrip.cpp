@@ -55,6 +55,11 @@ m_bIsRunning(false), m_uOffset(auOffset), m_uLength(auLength), Adafruit_NeoPixel
 
 }
 
+CVirtualLedStrip::CVirtualLedStrip(CVirtualLedStrip& acLedStrip)
+{
+
+}
+
 CVirtualLedStrip::~CVirtualLedStrip(void)
 {
 
@@ -116,10 +121,54 @@ uint32_t CVirtualLedStrip::getPixelColor(uint16_t auPixelNumber) const
 
 void CVirtualLedStrip::runShootingStar(void)
 {
+	if(m_bIsRunning)
+	{
+		if(m_uWaitCounter > 0U)
+		{
+			m_uWaitCounter--;
+		}
+		else
+		{
+			if(m_uCurrentStep < (DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW - 1))
+			{
+				/* Shooting star is not finished yet, still running. */
 
+				m_uCurrentStep++;
+				m_uWaitCounter = g_uStepDelays[m_uCurrentStep];
+				for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++){
+					// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
+					this->setPixelColor(uLoop, g_uLightIntensityMat[m_uCurrentStep][uLoop], g_uLightIntensityMat[m_uCurrentStep][uLoop], g_uLightIntensityMat[m_uCurrentStep][uLoop]);
+
+					this->show(); // This sends the updated pixel color to the hardware.
+				}
+			}
+			else
+			{
+				/* Shooting star is finished. */
+
+				m_bIsRunning = false;
+				m_uCurrentStep = 0;
+				m_uWaitCounter = g_uStepDelays[0];
+
+			}
+
+		}
+	}
 }
 
 bool CVirtualLedStrip::isRunning(void)
 {
 	return m_bIsRunning;
+}
+
+bool CVirtualLedStrip::startRunning(void)
+{
+	if(!m_bIsRunning)
+	{
+		m_bIsRunning = true;
+		m_uCurrentStep = 0;
+		m_uWaitCounter = g_uStepDelays[0];
+	}
+
+
 }

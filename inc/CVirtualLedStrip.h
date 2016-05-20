@@ -29,10 +29,12 @@ private:
 	uint16_t m_uLength;
 	/*! \brief Current step in programme. */
 	uint16_t m_uCurrentStep;
-
+	/*! \brief Wait counter between current and next step of programme. */
+	uint32_t m_uWaitCounter;
 
 public:
 	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber=6, neoPixelType atPixelType=NEO_GRB + NEO_KHZ800);
+	CVirtualLedStrip(CVirtualLedStrip& acLedStrip);
 	~CVirtualLedStrip(void);
 
 	/* Overriden members from Adafruit_NeoPixel */
@@ -49,6 +51,7 @@ public:
     /* Programmes */
     virtual void runShootingStar(void);
     virtual bool isRunning(void);
+    virtual bool startRunning(void);
 };
 
 

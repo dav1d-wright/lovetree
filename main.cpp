@@ -38,6 +38,7 @@
 /* forward declarations */
 /*----------------------------------------------------------------------------*/
 void runningTask(void* apvArgument);
+void handleLedStripTask(void* apvLedStrip);
 
 /*----------------------------------------------------------------------------*/
 /* globals */
@@ -45,7 +46,7 @@ void runningTask(void* apvArgument);
 /*! \brief WS2812 strip object */
 CVirtualLedStrip* g_cPixels[DF_MVDATA_NUM_VIRTUAL_STRIPS];
 /*! \brief WS2812 strip object */
-const uint8_t g_uPins[DF_MVDATA_NUM_VIRTUAL_STRIPS] = {0};
+const uint8_t g_uPins[DF_MVDATA_NUM_VIRTUAL_STRIPS] = {6U, 6U, 6U, 9U, 9U, 9U, 10U, 10U, 10U, 11U, 11U, 11U};
 /*! \brief Delay variable */
 uint16_t g_uDelayVal = 500U;
 /*! \brief task handles */
@@ -64,22 +65,31 @@ TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_VIRTUAL_STRIPS];
 /*----------------------------------------------------------------------------*/
 void setup(void)
 {
-	/* Setup LED strips */
-	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
-	{
-		g_cPixels[uStripIndex] = new CVirtualLedStrip(DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
-		g_cPixels[uStripIndex]->begin();
-	}
+	char ychTaskString[7];
 
 	/* Setup serial communication for debug */
 	Serial.begin(9600);
 	Serial.println("Hello World from setup!");
 
+	/* Setup LED strip tasks */
+	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
+	{
+		/* Every third strip is the first virtual strip of a physical strip */
+		uint8_t uOffset = (uStripIndex % 3U) * 50;
+		g_cPixels[uStripIndex] = new CVirtualLedStrip(uOffset, DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
+		g_cPixels[uStripIndex]->begin();
+
+		sprintf(ychTaskString, "Handle%u", uStripIndex);
+		uint8_t uTaskErr = 	xTaskCreate(handleLedStripTask, ychTaskString, 1024, (void*)(&g_cPixels[uStripIndex]), 1, g_pvTaskHandles);
+		if(uTaskErr != 1)
+		{
+			Serial.println("Error in task creation!");
+		}
+	}
+
 	/* Setup tasks */
-	xTaskCreate(runningTask, "example task 1", 1024, 0, 1, g_pvTaskHandles);
-//	xTaskCreate(runningTask, "example task 2", 1024, 0, 1, g_pvTaskHandles);
-//	xTaskCreate(runningTask, "example task 3", 1024, 0, 1, g_pvTaskHandles);
-//	xTaskCreate(runningTask, "example task 4", 1024, 0, 1, g_pvTaskHandles);
+	xTaskCreate(runningTask, "example", 1024, 0, 1, g_pvTaskHandles);
+
 	vTaskStartScheduler();
 }
 
@@ -106,6 +116,11 @@ void loop(void)
 	Serial.println("Loop is still here.");
 
   }
+}
+
+void handleLedStripTask(void* apvLedStrip)
+{
+	CVirtualLedStrip* pcLedStrip = (CVirtualLedStrip*) apvLedStrip;
 }
 
 void runningTask(void* apvArgument)
