@@ -17,6 +17,17 @@
 #define INC_CVIRTUALLEDSTRIP_H_
 
 /*----------------------------------------------------------------------------*/
+/* typedefs */
+/*----------------------------------------------------------------------------*/
+typedef enum
+{
+	eRunStateShootingStarIdle = 0,
+	eRunStateShootingStarWaiting,
+	eRunStateShootingStarOutput,
+	eRunStateShootingStarNextStep
+}ERunStateShootingStar;
+
+/*----------------------------------------------------------------------------*/
 
 class CVirtualLedStrip: public Adafruit_NeoPixel
 {
@@ -50,6 +61,7 @@ public:
 
     /* Programmes */
     virtual void runShootingStar(void);
+    virtual void handleShootingStarOutput(void);
     virtual bool isRunning(void);
     virtual bool startRunning(void);
 };
