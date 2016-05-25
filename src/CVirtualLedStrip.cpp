@@ -131,7 +131,14 @@ void CVirtualLedStrip::runShootingStar(void)
 		// do nothing
 		break;
 	case eRunStateShootingStarWaiting:
-		m_uWaitCounter--;
+		if(m_uWaitCounter > 0)
+		{
+			/* This > 0 guard is mainly because erroneous flash reads could (and did) return 0,
+			 * which caused underflows. Usually m_uWaitCounter should only be zero AFTER this
+			 * decrement, because it is only decremented here.
+			 */
+			m_uWaitCounter--;
+		}
 		if(m_uWaitCounter == 0)
 		{
 			m_eRunStateShootingStar = eRunStateShootingStarOutput;
@@ -164,9 +171,9 @@ void CVirtualLedStrip::runShootingStar(void)
 			m_uCurrentStep = 0;
 			m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
 		}
-		char sNext[64];
-		sprintf(sNext, "NextStep %u %u %u", this, m_uCurrentStep, m_uWaitCounter);
-		Serial.println(sNext);
+//		char sNext[64];
+//		sprintf(sNext, "NextStep %u %u %u", this, m_uCurrentStep, m_uWaitCounter);
+//		Serial.println(sNext);
 		break;
 	}
 }
