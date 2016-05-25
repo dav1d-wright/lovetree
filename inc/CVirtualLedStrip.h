@@ -19,11 +19,18 @@
 /*----------------------------------------------------------------------------*/
 /* typedefs */
 /*----------------------------------------------------------------------------*/
+/*----------------------------------------------------------------------------*/
+/*!	\brief Shooting star programme states
+*/
 typedef enum
 {
+	/*!	\brief Idle state.*/
 	eRunStateShootingStarIdle = 0,
+	/*!	\brief Waiting state.*/
 	eRunStateShootingStarWaiting,
+	/*!	\brief Output state.*/
 	eRunStateShootingStarOutput,
+	/*!	\brief Calculate next state.*/
 	eRunStateShootingStarNextStep
 }ERunStateShootingStar;
 
@@ -50,20 +57,77 @@ public:
 	~CVirtualLedStrip(void);
 
 	/* Overriden members from Adafruit_NeoPixel */
+	/*!	\brief Set pixel colours.
+		\param auPixelNumber.
+		\param auRed.
+		\param auGreen.
+		\param auBlue.
+		\retval None.
+	*/
     virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue);
+
+	/*!	\brief Set pixel colours.
+		\param auPixelNumber.
+		\param auRed.
+		\param auGreen.
+		\param auBlue.
+		\param auWhite.
+		\retval None.
+	*/
     virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue, uint8_t auWhite);
+
+	/*!	\brief Set pixel colours.
+		\param auPixelNumber.
+		\param auColour.
+		\retval None.
+	*/
 	virtual void setPixelColor(uint16_t auPixelNumber, uint32_t auColour);
+
+	/*!	\brief Set pixel brightness.
+		\param auBrightness.
+		\retval None.
+	*/
 	virtual void setBrightness(uint8_t auBrightness);
+
+	/*!	\brief Clear all pixels.
+		\param auLength.
+		\retval None.
+	*/
 	virtual void clear(void);
+
+	/*!	\brief Update strip length.
+		\param None.
+		\retval None.
+	*/
 	virtual void updateLength(uint16_t auLength);
-    virtual uint8_t *getPixels(void) const;
+
+    virtual uint8_t* getPixels(void) const;
     virtual uint16_t numPixels(void) const;
     virtual uint32_t getPixelColor(uint16_t auPixelNumber) const;
 
     /* Programmes */
+	/*!	\brief Run shooting star programme.
+		\param None.
+		\retval None.
+	*/
     virtual void runShootingStar(void);
+
+	/*!	\brief Shooting star pixel output handler.
+		\param None.
+		\retval None.
+	*/
     virtual void handleShootingStarOutput(void);
+
+	/*!	\brief Return whether or not a programme is running.
+		\param None.
+		\return True if a programme is running.
+	*/
     virtual bool isRunning(void);
+
+	/*!	\brief Start the programme.
+		\param None.
+		\retval None.
+	*/
     virtual bool startRunning(void);
 };
 

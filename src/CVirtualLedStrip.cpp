@@ -58,30 +58,88 @@ Adafruit_NeoPixel(auLength * DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP, auPinN
 	Serial.println("Constructor");
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	None.
+
+	\post
+	The whole real LED strip is initialised.
+
+	Copy constructor.
+	This function initialises a complete real led strip. This is done so that the virtual LED
+	strip can simply access the partial strip by using an offset to the accessed pixel number.
+*/
+/*----------------------------------------------------------------------------*/
 CVirtualLedStrip::CVirtualLedStrip(CVirtualLedStrip& acLedStrip)
 {
 
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	None.
+
+	\post
+	None.
+
+	Destructor
+*/
+/*----------------------------------------------------------------------------*/
 CVirtualLedStrip::~CVirtualLedStrip(void)
 {
 
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	Constructor has been called.
+
+	\post
+	Pixel colour is set.
+
+	Changes are only visible after calling CVirtualLedStrip::show().
+*/
+/*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue)
 {
 	Adafruit_NeoPixel::setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	Constructor has been called.
+
+	\post
+	Pixel colour is set.
+
+	Changes are only visible after calling CVirtualLedStrip::show().
+*/
+/*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue, uint8_t auWhite)
 {
 	Adafruit_NeoPixel::setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue, auWhite);
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	Constructor has been called.
+
+	\post
+	Pixel colour is set.
+
+	Changes are only visible after calling CVirtualLedStrip::show().
+*/
+/*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint32_t auColour)
 {
 	Adafruit_NeoPixel::setPixelColor(auPixelNumber + m_uOffset, auColour);
 }
+
 
 void CVirtualLedStrip::setBrightness(uint8_t auBrightness)
 {
@@ -91,6 +149,7 @@ void CVirtualLedStrip::setBrightness(uint8_t auBrightness)
 	Serial.println("CVirtualLedStrip::setBrightness() is currently not implemented!!");
 }
 
+
 void CVirtualLedStrip::clear(void)
 {
 	/* I think the most useful method to set the brightness is doing it via CVirtualLedStrip::setPixelColor()
@@ -99,6 +158,7 @@ void CVirtualLedStrip::clear(void)
 	Serial.println("CVirtualLedStrip::clear() is currently not implemented!!");
 }
 
+
 void CVirtualLedStrip::updateLength(uint16_t n)
 {
 	/* I don't think it makes sense to call the base method, since it might very well be possible that the strip
@@ -106,12 +166,23 @@ void CVirtualLedStrip::updateLength(uint16_t n)
 	Serial.println("CVirtualLedStrip::updateLength() is currently not implemented!!");
 }
 
+
 uint8_t* CVirtualLedStrip::getPixels(void) const
 {
 	/* Again I don't know yet how it is possible to get a pointer to the pixels on the real LED strip. */
 	Serial.println("CVirtualLedStrip::getPixels() is currently not implemented!!");
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	Constructor has been called.
+
+	\post
+	None.
+
+*/
+/*----------------------------------------------------------------------------*/
 uint16_t CVirtualLedStrip::numPixels(void) const
 {
 	return m_uLength;
@@ -122,6 +193,17 @@ uint32_t CVirtualLedStrip::getPixelColor(uint16_t auPixelNumber) const
 	return Adafruit_NeoPixel::getPixelColor(auPixelNumber + m_uOffset);
 }
 
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	Constructor has been called.
+
+	\post
+	Next step of shooting star programme has been completed.
+
+	The programme is divided in the states defined in \see ERunStateShootingStar.
+*/
+/*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::runShootingStar(void)
 {
 
