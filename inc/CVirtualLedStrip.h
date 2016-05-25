@@ -42,6 +42,7 @@ private:
 	uint16_t m_uCurrentStep;
 	/*! \brief Wait counter between current and next step of programme. */
 	uint32_t m_uWaitCounter;
+	ERunStateShootingStar m_eRunStateShootingStar;
 
 public:
 	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber=6, neoPixelType atPixelType=NEO_GRB + NEO_KHZ800);
