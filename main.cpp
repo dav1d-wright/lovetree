@@ -81,7 +81,7 @@ void setup(void)
 		g_cPixels[uStripIndex]->begin();
 
 		sprintf(ychTaskString, "Handle%u", uStripIndex);
-		uint8_t uTaskErr = 	xTaskCreate(handleLedStripTask, ychTaskString, 1024, (void*)(g_cPixels[uStripIndex]), 1, g_pvTaskHandles);
+		uint8_t uTaskErr = 	xTaskCreate(handleLedStripTask, ychTaskString, 1024, g_cPixels[uStripIndex], 1, g_pvTaskHandles);
 		if(uTaskErr != 1)
 		{
 			Serial.println("Error in task creation!");
@@ -121,28 +121,22 @@ void loop(void)
 
 void handleLedStripTask(void* apvLedStrip)
 {
-	taskENTER_CRITICAL();
-
-	if(!apvLedStrip)
+	CVirtualLedStrip* pcLedStrip = (CVirtualLedStrip*)apvLedStrip;
+	while(true)
 	{
-		Serial.println("Oooops, null pointer!");
-	}
+		if(!apvLedStrip)
+		{
+			Serial.println("Oooops, null pointer!");
+		}
 
-	if(!(((CVirtualLedStrip*) apvLedStrip) -> isRunning()))
-	{
-		((CVirtualLedStrip*) apvLedStrip) -> startRunning();
-	}
-	else
-	{
-		char sStr[64];
-		sprintf(sStr, "Continue%u", apvLedStrip);
-		Serial.println(sStr);
-	}
-	((CVirtualLedStrip*) apvLedStrip) -> runShootingStar();
+		if(!(pcLedStrip -> isRunning()))
+		{
+			pcLedStrip -> startRunning();
+		}
+		pcLedStrip -> runShootingStar();
 
-	taskEXIT_CRITICAL();
-
-	vTaskDelay(100);
+		vTaskDelay(1);
+	}
 }
 
 void runningTask(void* apvArgument)

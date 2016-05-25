@@ -17,6 +17,7 @@
 /* includes */
 /*----------------------------------------------------------------------------*/
 #include <stdint.h>
+#include <avr/pgmspace.h>
 #include <MoveData.h>
 #include <Adafruit_NeoPixel.h>
 #include <CVirtualLedStrip.h>
@@ -54,7 +55,6 @@ CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t
 m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength),
 Adafruit_NeoPixel(auLength * DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP, auPinNumber, atLedType)
 {
-
 	Serial.println("Constructor");
 }
 
@@ -131,15 +131,11 @@ void CVirtualLedStrip::runShootingStar(void)
 		// do nothing
 		break;
 	case eRunStateShootingStarWaiting:
-
 		m_uWaitCounter--;
 		if(m_uWaitCounter == 0)
 		{
 			m_eRunStateShootingStar = eRunStateShootingStarOutput;
 		}
-		char sWait[64];
-		sprintf(sWait, "Waiting%u: %u %d", this, m_uWaitCounter, m_bIsRunning);
-		Serial.println(sWait);
 
 		break;
 	case eRunStateShootingStarOutput:
@@ -151,18 +147,13 @@ void CVirtualLedStrip::runShootingStar(void)
 
 		break;
 	case eRunStateShootingStarNextStep:
-
-		char sNext[64];
-		sprintf(sNext, "NextStep%u", this);
-		Serial.println(sNext);
-
 		if(m_uCurrentStep < (DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW - 1))
 		{
 			/* if current step is not last step: wait until countdown has finished */
 			m_eRunStateShootingStar = eRunStateShootingStarWaiting;
 
 			m_uCurrentStep++;
-			m_uWaitCounter = g_uStepDelays[m_uCurrentStep];
+			m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays + m_uCurrentStep));
 		}
 		else
 		{
@@ -171,8 +162,11 @@ void CVirtualLedStrip::runShootingStar(void)
 
 			m_bIsRunning = false;
 			m_uCurrentStep = 0;
-			m_uWaitCounter = g_uStepDelays[0];
+			m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
 		}
+		char sNext[64];
+		sprintf(sNext, "NextStep %u %u %u", this, m_uCurrentStep, m_uWaitCounter);
+		Serial.println(sNext);
 		break;
 	}
 }
@@ -181,14 +175,11 @@ void CVirtualLedStrip::handleShootingStarOutput(void)
 {
 	for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 	{
-		// pixels.Color takes RGB values, from 0,0,0 up to 255,255,255
-		this->setPixelColor(uLoop, g_uLightIntensityMat[m_uCurrentStep][uLoop], g_uLightIntensityMat[m_uCurrentStep][uLoop], g_uLightIntensityMat[m_uCurrentStep][uLoop]);
-
-//		m_pcLpd->setPixelColor(uLoop, g_uLightIntensityMat[m_uCurrentStep][uLoop], g_uLightIntensityMat[m_uCurrentStep][uLoop], g_uLightIntensityMat[m_uCurrentStep][uLoop]);
+		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStep] + uLoop);
+		this->setPixelColor(uLoop, uLightIntensity, uLightIntensity, uLightIntensity);
 	}
 
 	this->show(); // This sends the updated pixel color to the hardware.
-//	m_pcLpd->show();
 }
 
 bool CVirtualLedStrip::isRunning(void)
@@ -198,16 +189,16 @@ bool CVirtualLedStrip::isRunning(void)
 
 bool CVirtualLedStrip::startRunning(void)
 {
-//	if(!m_bIsRunning)
-//	{
+	if(!m_bIsRunning)
+	{
 		m_bIsRunning = true;
-		char sRun[32];
-		sprintf(sRun, "StarRunning%u %u", this, m_bIsRunning);
-		Serial.println(sRun);
 		m_uCurrentStep = 0;
-		m_uWaitCounter = 100;//g_uStepDelays[0];
+		m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
+
+		char sStrt[64];
+		sprintf(sStrt, "Start: %u %u %u %u", m_bIsRunning, m_uCurrentStep, m_uWaitCounter, g_uStepDelays[0]);
+		Serial.println(sStrt);
+
 		m_eRunStateShootingStar = eRunStateShootingStarWaiting;
-//	}
-
-
+	}
 }
