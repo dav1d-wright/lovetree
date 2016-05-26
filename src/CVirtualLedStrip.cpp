@@ -225,7 +225,6 @@ void CVirtualLedStrip::runShootingStar(void)
 		{
 			m_eRunStateShootingStar = eRunStateShootingStarOutput;
 		}
-
 		break;
 	case eRunStateShootingStarOutput:
 		this->handleShootingStarOutput();
