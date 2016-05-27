@@ -52,10 +52,13 @@ using namespace std;
 */
 /*----------------------------------------------------------------------------*/
 CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber, neoPixelType atLedType):
-m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength),
-Adafruit_NeoPixel(auLength * DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP, auPinNumber, atLedType)
+m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength)
 {
-	Serial.println("Constructor");
+	if(m_uOffset == 0)
+	{
+		Adafruit_NeoPixel(auLength * DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP, auPinNumber, atLedType);
+	}
+	Serial.println("Constructor.");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -229,10 +232,6 @@ void CVirtualLedStrip::runShootingStar(void)
 	case eRunStateShootingStarOutput:
 		this->handleShootingStarOutput();
 		m_eRunStateShootingStar = eRunStateShootingStarNextStep;
-		char sOut[64];
-		sprintf(sOut, "Output%u", this);
-		Serial.println(sOut);
-
 		break;
 	case eRunStateShootingStarNextStep:
 		if(m_uCurrentStep < (DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW - 1))
@@ -261,6 +260,7 @@ void CVirtualLedStrip::runShootingStar(void)
 
 void CVirtualLedStrip::handleShootingStarOutput(void)
 {
+	Serial.println("hdl");
 	for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 	{
 		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStep] + uLoop);
@@ -282,10 +282,6 @@ bool CVirtualLedStrip::startRunning(void)
 		m_bIsRunning = true;
 		m_uCurrentStep = 0;
 		m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
-
-		char sStrt[64];
-		sprintf(sStrt, "Start: %u %u %u %u", m_bIsRunning, m_uCurrentStep, m_uWaitCounter, g_uStepDelays[0]);
-		Serial.println(sStrt);
 
 		m_eRunStateShootingStar = eRunStateShootingStarWaiting;
 	}

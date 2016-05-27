@@ -37,7 +37,6 @@
 /*----------------------------------------------------------------------------*/
 /* forward declarations */
 /*----------------------------------------------------------------------------*/
-void runningTask(void* apvArgument);
 void handleLedStripTask(void* apvLedStrip);
 
 /*----------------------------------------------------------------------------*/
@@ -67,12 +66,10 @@ TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_VIRTUAL_STRIPS];
 Adafruit_NeoPixel pixel = Adafruit_NeoPixel(DF_MVDATA_NUM_LEDS_PER_REAL_STRIP, 6, NEO_GRB + NEO_KHZ800);
 void setup(void)
 {
-	char ychTaskString[7];
+//	char sTaskString[7];
 
 	/* Setup serial communication for debug */
 	Serial.begin(9600);
-	Serial.println("Hello World from setup!");
-
 	/* Setup LED strip tasks */
 	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
 	{
@@ -81,27 +78,25 @@ void setup(void)
 		g_pcPixels[uStripIndex] = new CVirtualLedStrip(uOffset, DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
 		g_pcPixels[uStripIndex]->begin();
 
-//		sprintf(ychTaskString, "Handle%u", uStripIndex);
+		for(uint8_t uLoop = 1; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
+		{
+			g_pcPixels[uStripIndex] -> setPixelColor(uLoop, 0, 0, 0);
+			g_pcPixels[uStripIndex] -> show();
+		}
+
+//		sprintf(sTaskString, "Handle%u", uStripIndex);
 //		uint8_t uTaskErr = 	xTaskCreate(handleLedStripTask, ychTaskString, 1024, g_pcPixels[uStripIndex], 1, g_pvTaskHandles);
 //		if(uTaskErr != 1)
 //		{
 //			Serial.println("Error in task creation!");
 //		}
 
-		g_pcPixels[uStripIndex] -> begin();
-
-//		g_cPixels[uStripIndex]->show(); // This sends the updated pixel color to the hardware.
+		 // This sends the updated pixel color to the hardware.
 	}
-//	Serial.println("begin");
-//	pixel.begin();
-//	for(uint8_t uLoop = 1; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
-//	{
-//		pixel.setPixelColor(uLoop, 0xff, 0xff, 0xff);
-//	}
-//
-//	pixel.show(); // This sends the updated pixel color to the hardware.
+	delay(1000);
+
 	/* Setup tasks */
-//	xTaskCreate(runningTask, "example", 1024, 0, 1, g_pvTaskHandles);
+	Serial.println("Hello world from setup!");
 
 //	vTaskStartScheduler();
 }
@@ -119,17 +114,16 @@ void setup(void)
 /*----------------------------------------------------------------------------*/
 void loop(void)
 {
-//	Serial.println("loop");
+	Serial.println("loop");
 	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
 	{
-		handleLedStripTask(&uStripIndex);
+		handleLedStripTask(g_pcPixels[uStripIndex]);
 	}
 }
 
 void handleLedStripTask(void* apvLedStrip)
 {
-	uint8_t uIndex = *((uint8_t*)apvLedStrip);
-//	CVirtualLedStrip* pcLedStrip = (CVirtualLedStrip*)apvLedStrip;
+	CVirtualLedStrip* pcLedStrip = (CVirtualLedStrip*)apvLedStrip;
 //	while(true)
 //	{
 		if(!apvLedStrip)
@@ -137,35 +131,12 @@ void handleLedStripTask(void* apvLedStrip)
 			Serial.println("Oooops, null pointer!");
 		}
 
-		if(!(g_pcPixels[uIndex] -> isRunning()))
+		if(!(pcLedStrip -> isRunning()))
 		{
-			Serial.println("Start");
-			g_pcPixels[uIndex] -> startRunning();
+			pcLedStrip -> startRunning();
 		}
-		Serial.println("Run");
-		g_pcPixels[uIndex] -> runShootingStar();
+		pcLedStrip -> runShootingStar();
 
 //		vTaskDelay(1);
 //	}
-}
-
-void runningTask(void* apvArgument)
-{
-	static uint32_t s_uLastEnterTime;
-	static TickType_t s_tLastWakeTicks;
-	uint32_t uCurrentEnterTime;
-	uint32_t uTimeElapsed;
-	char cTimeString[256] = {0};
-	s_uLastEnterTime = millis();
-
-	while(true)
-	{
-		s_tLastWakeTicks = xTaskGetTickCount();
-		uCurrentEnterTime = millis();
-		uTimeElapsed = uCurrentEnterTime - s_uLastEnterTime;
-		sprintf(cTimeString, "Timediff: %u ms.", uTimeElapsed);
-		Serial.println(cTimeString);
-		s_uLastEnterTime = uCurrentEnterTime;
-		vTaskDelayUntil(&s_tLastWakeTicks, 1);
-	}
 }
