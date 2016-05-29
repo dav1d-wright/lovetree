@@ -35,8 +35,7 @@ typedef enum
 }ERunStateShootingStar;
 
 /*----------------------------------------------------------------------------*/
-
-class CVirtualLedStrip: public Adafruit_NeoPixel
+class CVirtualLedStrip
 {
 private:
 	/*! \brief Offset from pixel number zero of the physical strip. */
@@ -50,9 +49,10 @@ private:
 	/*! \brief Wait counter between current and next step of programme. */
 	uint32_t m_uWaitCounter;
 	ERunStateShootingStar m_eRunStateShootingStar;
+	CRGB* m_pcLedStrip;
 
 public:
-	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber=6, neoPixelType atPixelType=NEO_GRB + NEO_KHZ800);
+	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, CRGB* apcLedStrip);
 	CVirtualLedStrip(CVirtualLedStrip& acLedStrip);
 	~CVirtualLedStrip(void);
 
@@ -104,7 +104,10 @@ public:
     virtual uint8_t* getPixels(void) const;
     virtual uint16_t numPixels(void) const;
     virtual uint32_t getPixelColor(uint16_t auPixelNumber) const;
+    virtual void show(void) const;
+    virtual void begin(void) const;
 
+    ERunStateShootingStar getState(void);
     /* Programmes */
 	/*!	\brief Run shooting star programme.
 		\param None.

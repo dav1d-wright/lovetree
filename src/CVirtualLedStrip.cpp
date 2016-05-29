@@ -19,7 +19,7 @@
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include <MoveData.h>
-#include <Adafruit_NeoPixel.h>
+#include <FastLED.h>
 #include <CVirtualLedStrip.h>
 #include <string.h>
 using namespace std;
@@ -51,13 +51,9 @@ using namespace std;
 	strip can simply access the partial strip by using an offset to the accessed pixel number.
 */
 /*----------------------------------------------------------------------------*/
-CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, uint8_t auPinNumber, neoPixelType atLedType):
-m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength)
+CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, CRGB* apcLedStrip):
+m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength), m_pcLedStrip(apcLedStrip)
 {
-	if(m_uOffset == 0)
-	{
-		Adafruit_NeoPixel(auLength * DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP, auPinNumber, atLedType);
-	}
 	Serial.println("Constructor.");
 }
 
@@ -108,7 +104,7 @@ CVirtualLedStrip::~CVirtualLedStrip(void)
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue)
 {
-	Adafruit_NeoPixel::setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
+//	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -124,7 +120,7 @@ void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue, uint8_t auWhite)
 {
-	Adafruit_NeoPixel::setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue, auWhite);
+//	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue, auWhite);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -140,7 +136,7 @@ void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint32_t auColour)
 {
-	Adafruit_NeoPixel::setPixelColor(auPixelNumber + m_uOffset, auColour);
+//	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auColour);
 }
 
 
@@ -176,6 +172,21 @@ uint8_t* CVirtualLedStrip::getPixels(void) const
 	Serial.println("CVirtualLedStrip::getPixels() is currently not implemented!!");
 }
 
+void CVirtualLedStrip::show(void) const
+{
+//	m_pcLedStrip->show();
+}
+
+void CVirtualLedStrip::begin(void) const
+{
+//	m_pcLedStrip->begin();
+}
+
+ERunStateShootingStar CVirtualLedStrip::getState(void)
+{
+	return m_eRunStateShootingStar;
+}
+
 /*----------------------------------------------------------------------------*/
 /*!
 	\pre
@@ -193,7 +204,7 @@ uint16_t CVirtualLedStrip::numPixels(void) const
 
 uint32_t CVirtualLedStrip::getPixelColor(uint16_t auPixelNumber) const
 {
-	return Adafruit_NeoPixel::getPixelColor(auPixelNumber + m_uOffset);
+//	return m_pcLedStrip->getPixelColor(auPixelNumber + m_uOffset);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -228,6 +239,7 @@ void CVirtualLedStrip::runShootingStar(void)
 		{
 			m_eRunStateShootingStar = eRunStateShootingStarOutput;
 		}
+
 		break;
 	case eRunStateShootingStarOutput:
 		this->handleShootingStarOutput();
@@ -251,16 +263,15 @@ void CVirtualLedStrip::runShootingStar(void)
 			m_uCurrentStep = 0;
 			m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
 		}
-//		char sNext[64];
-//		sprintf(sNext, "NextStep %u %u %u", this, m_uCurrentStep, m_uWaitCounter);
-//		Serial.println(sNext);
+		break;
+	default:
+		m_eRunStateShootingStar = eRunStateShootingStarIdle;
 		break;
 	}
 }
 
 void CVirtualLedStrip::handleShootingStarOutput(void)
 {
-	Serial.println("hdl");
 	for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 	{
 		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStep] + uLoop);
