@@ -19,7 +19,12 @@
 #include <stdint.h>
 #include <avr/pgmspace.h>
 #include <MoveData.h>
+#ifdef DF_FASTLED
 #include <FastLED.h>
+#endif
+#ifdef DF_NEOPIXEL
+#include <Adafruit_NeoPixel.h>
+#endif
 #include <CVirtualLedStrip.h>
 #include <string.h>
 using namespace std;
@@ -51,10 +56,15 @@ using namespace std;
 	strip can simply access the partial strip by using an offset to the accessed pixel number.
 */
 /*----------------------------------------------------------------------------*/
-CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, CRGB* apcLedStrip):
-m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength), m_pcLedStrip(apcLedStrip)
+#ifdef DF_FASTLED
+CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, CRGB* apcLedStrip):
+#elif defined(DF_NEOPIXEL)
+CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, Adafruit_NeoPixel* apcLedStrip):
+#endif
+m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength),
+m_pcLedStrip(apcLedStrip), m_uStripNumber(auStripNumber)
 {
-	Serial.println("Constructor.");
+	Serial.println("Constructor");
 }
 
 /*----------------------------------------------------------------------------*/
@@ -104,9 +114,17 @@ CVirtualLedStrip::~CVirtualLedStrip(void)
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue)
 {
-//	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
+#ifdef DF_NEOPIXEL
+	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
+#elif defined(DF_FASTLED)
+	m_pcLedStrip[auPixelNumber + m_uOffset].red = auRed;
+	m_pcLedStrip[auPixelNumber + m_uOffset].green = auGreen;
+	m_pcLedStrip[auPixelNumber + m_uOffset].blue = auBlue;
+#endif
+
 }
 
+#ifdef DF_NEOPIXEL
 /*----------------------------------------------------------------------------*/
 /*!
 	\pre
@@ -120,7 +138,7 @@ void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue, uint8_t auWhite)
 {
-//	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue, auWhite);
+	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue, auWhite);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -136,8 +154,9 @@ void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint32_t auColour)
 {
-//	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auColour);
+	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auColour);
 }
+#endif
 
 
 void CVirtualLedStrip::setBrightness(uint8_t auBrightness)
@@ -174,12 +193,18 @@ uint8_t* CVirtualLedStrip::getPixels(void) const
 
 void CVirtualLedStrip::show(void) const
 {
-//	m_pcLedStrip->show();
+#ifdef DF_NEOPIXEL
+	m_pcLedStrip->show();
+#elif defined(DF_FASTLED)
+	FastLED[m_uStripNumber].showLeds(0xFFU);
+#endif
 }
 
 void CVirtualLedStrip::begin(void) const
 {
-//	m_pcLedStrip->begin();
+#ifdef DF_NEOPIXEL
+	m_pcLedStrip->begin();
+#endif
 }
 
 ERunStateShootingStar CVirtualLedStrip::getState(void)
@@ -204,7 +229,9 @@ uint16_t CVirtualLedStrip::numPixels(void) const
 
 uint32_t CVirtualLedStrip::getPixelColor(uint16_t auPixelNumber) const
 {
-//	return m_pcLedStrip->getPixelColor(auPixelNumber + m_uOffset);
+#ifdef DF_NEOPIXEL
+	return m_pcLedStrip->getPixelColor(auPixelNumber + m_uOffset);
+#endif
 }
 
 /*----------------------------------------------------------------------------*/

@@ -49,10 +49,20 @@ private:
 	/*! \brief Wait counter between current and next step of programme. */
 	uint32_t m_uWaitCounter;
 	ERunStateShootingStar m_eRunStateShootingStar;
+	uint8_t m_uStripNumber;
+#ifdef DF_FASTLED
 	CRGB* m_pcLedStrip;
-
+#endif
+#ifdef DF_NEOPIXEL
+	Adafruit_NeoPixel* m_pcLedStrip;
+#endif
 public:
-	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength, CRGB* apcLedStrip);
+#ifdef DF_FASTLED
+	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, CRGB* apcLedStrip);
+#endif
+#ifdef DF_NEOPIXEL
+	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, Adafruit_NeoPixel* apcLedStrip);
+#endif
 	CVirtualLedStrip(CVirtualLedStrip& acLedStrip);
 	~CVirtualLedStrip(void);
 
@@ -66,6 +76,7 @@ public:
 	*/
     virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue);
 
+#ifdef DF_NEOPIXEL
 	/*!	\brief Set pixel colours.
 		\param auPixelNumber.
 		\param auRed.
@@ -87,6 +98,7 @@ public:
 		\param auBrightness.
 		\retval None.
 	*/
+#endif
 	virtual void setBrightness(uint8_t auBrightness);
 
 	/*!	\brief Clear all pixels.

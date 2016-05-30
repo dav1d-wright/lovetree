@@ -54,6 +54,7 @@
 								</option>
 								<option id="de.innot.avreclipse.compiler.option.def.2144985635" name="Define Syms (-D)" superClass="de.innot.avreclipse.compiler.option.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ARDUINO=10609"/>
+									<listOptionValue builtIn="false" value="DF_FASTLED"/>
 									<listOptionValue builtIn="false" value="NEED_CXX_BITS"/>
 									<listOptionValue builtIn="false" value="__AVR__"/>
 									<listOptionValue builtIn="false" value="ARDUINO_AVR_MEGA2560"/>
@@ -83,6 +84,7 @@
 								</option>
 								<option id="de.innot.avreclipse.cppcompiler.option.def.239072127" name="Define Syms (-D)" superClass="de.innot.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
 									<listOptionValue builtIn="false" value="ARDUINO=10609"/>
+									<listOptionValue builtIn="false" value="DF_FASTLED"/>
 									<listOptionValue builtIn="false" value="NEED_CXX_BITS"/>
 									<listOptionValue builtIn="false" value="__AVR__"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_AVR"/>
@@ -297,7 +299,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="inc/Arduino/hardware/arduino/avr/cores/arduino/abi.cpp|inc/Adafruit_NeoPixel|inc/FastLED/platforms/esp|inc/FastLED/platforms/arm|inc/FastLED/docs|inc/FastLED/extras|inc/LPD8806/examples|inc/Arduino_FreeRTOS_Library/examples|inc/Arduino/hardware/arduino/avr/firmwares|inc/Arduino/hardware/arduino/sam|inc/Arduino/libraries|inc/Arduino/hardware/arduino/avr/bootloaders|inc/Arduino/build|inc/Arduino/arduino-core|inc/Arduino/app|inc/FreeRTOS-Arduino/libraries/FreeRTOS_AVR/examples|inc/FreeRTOS-Arduino/libraries/FreeRTOS_ARM|inc/Adafruit_NeoPixel/examples|inc/FastLED/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="inc/Arduino/hardware/arduino/avr/cores/arduino/abi.cpp|inc/FastLED/platforms/esp|inc/FastLED/platforms/arm|inc/FastLED/docs|inc/FastLED/extras|inc/LPD8806/examples|inc/Arduino_FreeRTOS_Library/examples|inc/Arduino/hardware/arduino/avr/firmwares|inc/Arduino/hardware/arduino/sam|inc/Arduino/libraries|inc/Arduino/hardware/arduino/avr/bootloaders|inc/Arduino/build|inc/Arduino/arduino-core|inc/Arduino/app|inc/FreeRTOS-Arduino/libraries/FreeRTOS_AVR/examples|inc/FreeRTOS-Arduino/libraries/FreeRTOS_ARM|inc/Adafruit_NeoPixel/examples|inc/FastLED/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -357,8 +359,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/cores/arduino}&quot;"/>
 								</option>
 								<option id="de.innot.avreclipse.compiler.option.def.82597561" name="Define Syms (-D)" superClass="de.innot.avreclipse.compiler.option.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="ARDUINO"/>
+									<listOptionValue builtIn="false" value="ARDUINO=10609"/>
+									<listOptionValue builtIn="false" value="DF_FASTLED"/>
 									<listOptionValue builtIn="false" value="NEED_CXX_BITS"/>
+									<listOptionValue builtIn="false" value="__AVR__"/>
+									<listOptionValue builtIn="false" value="ARDUINO_AVR_MEGA2560"/>
+									<listOptionValue builtIn="false" value="ARDUINO_ARCH_AVR"/>
 								</option>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.624482508" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
@@ -384,8 +390,12 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/inc/Arduino/hardware/arduino/avr/variants/standard}&quot;"/>
 								</option>
 								<option id="de.innot.avreclipse.cppcompiler.option.def.207541303" name="Define Syms (-D)" superClass="de.innot.avreclipse.cppcompiler.option.def" valueType="definedSymbols">
-									<listOptionValue builtIn="false" value="ARDUINO"/>
+									<listOptionValue builtIn="false" value="ARDUINO=10609"/>
+									<listOptionValue builtIn="false" value="DF_FASTLED"/>
 									<listOptionValue builtIn="false" value="NEED_CXX_BITS"/>
+									<listOptionValue builtIn="false" value="__AVR__"/>
+									<listOptionValue builtIn="false" value="ARDUINO_ARCH_AVR"/>
+									<listOptionValue builtIn="false" value="ARDUINO_AVR_MEGA2560"/>
 								</option>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.1034818864" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
@@ -594,7 +604,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry excluding="inc/Arduino/hardware/arduino/avr/cores/arduino/abi.cpp|inc/Adafruit_NeoPixel|inc/FastLED/platforms/esp|inc/FastLED/platforms/arm|inc/FastLED/docs|inc/FastLED/extras|inc/LPD8806/examples|inc/Arduino_FreeRTOS_Library/examples|inc/FreeRTOS-Arduino/libraries/FreeRTOS_AVR/org_files|inc/Arduino/hardware/arduino/avr/firmwares|inc/Arduino/hardware/arduino/sam|inc/Arduino/libraries|inc/Arduino/hardware/arduino/avr/bootloaders|inc/Arduino/build|inc/Arduino/arduino-core|inc/FreeRTOS-Arduino/libraries/FreeRTOS_AVR/examples|inc/FreeRTOS-Arduino/libraries/FreeRTOS_ARM|inc/Adafruit_NeoPixel/examples|inc/FastLED/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+						<entry excluding="inc/Arduino/hardware/arduino/avr/cores/arduino/abi.cpp|inc/FastLED/platforms/esp|inc/FastLED/platforms/arm|inc/FastLED/docs|inc/FastLED/extras|inc/LPD8806/examples|inc/Arduino_FreeRTOS_Library/examples|inc/FreeRTOS-Arduino/libraries/FreeRTOS_AVR/org_files|inc/Arduino/hardware/arduino/avr/firmwares|inc/Arduino/hardware/arduino/sam|inc/Arduino/libraries|inc/Arduino/hardware/arduino/avr/bootloaders|inc/Arduino/build|inc/Arduino/arduino-core|inc/FreeRTOS-Arduino/libraries/FreeRTOS_AVR/examples|inc/FreeRTOS-Arduino/libraries/FreeRTOS_ARM|inc/Adafruit_NeoPixel/examples|inc/FastLED/examples" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -606,13 +616,13 @@
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
-		<configuration configurationName="Release">
-			<resource resourceType="PROJECT" workspacePath="/lovetree"/>
-		</configuration>
 		<configuration configurationName="Multiple configurations">
 			<resource resourceType="PROJECT" workspacePath="/lovetree"/>
 		</configuration>
 		<configuration configurationName="Debug">
+			<resource resourceType="PROJECT" workspacePath="/lovetree"/>
+		</configuration>
+		<configuration configurationName="Release">
 			<resource resourceType="PROJECT" workspacePath="/lovetree"/>
 		</configuration>
 	</storageModule>

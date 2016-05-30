@@ -24,8 +24,12 @@
 /*----------------------------------------------------------------------------*/
 #include <stdint.h>
 //#include <Arduino.h>
-//#include <Adafruit_NeoPixel.h>
+#ifdef DF_NEOPIXEL
+#include <Adafruit_NeoPixel.h>
+#endif
+#ifdef DF_FASTLED
 #include <FastLED.h>
+#endif
 #include <Arduino_FreeRTOS.h>
 
 #include <CVirtualLedStrip.h>
@@ -45,8 +49,15 @@ void handleLedStripTask(void* apvLedStrip);
 /*----------------------------------------------------------------------------*/
 /*! \brief virtual WS2812 strip object */
 CVirtualLedStrip* g_pcVirtPixels[DF_MVDATA_NUM_VIRTUAL_STRIPS];
-CRGB g_ycPhysPixels[DF_MVDATA_NUM_REAL_STRIPS];
-CRGB g_ycPhysPixelsForVirtStrips[DF_MVDATA_NUM_VIRTUAL_STRIPS];
+#ifdef DF_FASTLED
+CRGB g_ycPhysPixels[DF_MVDATA_NUM_REAL_STRIPS][DF_MVDATA_NUM_LEDS_PER_REAL_STRIP];
+CRGB* g_ypcPhysPixelsForVirtStrips[DF_MVDATA_NUM_VIRTUAL_STRIPS];
+#endif
+
+#ifdef DF_NEOPIXEL
+Adafruit_NeoPixel* g_ypcPhysPixels[DF_MVDATA_NUM_REAL_STRIPS];
+Adafruit_NeoPixel* g_ypcPhysPixelsForVirtStrips[DF_MVDATA_NUM_VIRTUAL_STRIPS];
+#endif
 
 /*! \brief WS2812 strip object */
 //const uint8_t g_uPins[DF_MVDATA_NUM_REAL_STRIPS] = {6U, 9U, 10U, 11U};
@@ -74,29 +85,39 @@ void setup(void)
 	/* Setup serial communication for debug */
 	Serial.begin(9600);
 
-//	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_REAL_STRIPS; uStripIndex++)
-//	{
-//		FastLED.addLeds<NEOPIXEL, g_uPins[1]>(g_ycPhysPixels[uStripIndex], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
-//		/* Every third strip is the first virtual strip of a physical strip */
-////		g_ycPhysPixels[uStripIndex] = new Adafruit_NeoPixel(DF_MVDATA_NUM_LEDS_PER_REAL_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
-////		g_ycPhysPixels[uStripIndex]->begin();
-//	}
+#ifdef DF_NEOPIXEL
+	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_REAL_STRIPS; uStripIndex++)
+	{
+		/* Every third strip is the first virtual strip of a physical strip */
+		g_ypcPhysPixels[uStripIndex] = new Adafruit_NeoPixel(DF_MVDATA_NUM_LEDS_PER_REAL_STRIP, g_uPins[uStripIndex], NEO_GRB + NEO_KHZ800);
+		g_ypcPhysPixels[uStripIndex]->begin();
+	}
+#endif
+#ifdef DF_FASTLED
+	FastLED.addLeds<NEOPIXEL, 6>(g_ycPhysPixels[0], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
+#endif
 
-	FastLED.addLeds<NEOPIXEL, 6>(&g_ycPhysPixels[0], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
+	for(uint8_t uRealIndex = 0; uRealIndex < DF_MVDATA_NUM_REAL_STRIPS; uRealIndex++)
+	{
+		for(uint8_t uVirtIndex = 0; uVirtIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uVirtIndex++)
+		{
+#ifdef DF_NEOPIXEL
+			g_ypcPhysPixelsForVirtStrips[(uRealIndex * DF_MVDATA_NUM_VIRTUAL_STRIPS) + uVirtIndex] =
+					g_ypcPhysPixels[uRealIndex];
+#endif
+#ifdef DF_FASTLED
+			g_ypcPhysPixelsForVirtStrips[(uRealIndex * DF_MVDATA_NUM_VIRTUAL_STRIPS) + uVirtIndex] =
+					g_ycPhysPixels[uRealIndex];
+#endif
+		}
+	}
 
-//	for(uint8_t uRealIndex = 0; uRealIndex < DF_MVDATA_NUM_REAL_STRIPS; uRealIndex++)
-//	{
-//		for(uint8_t uVirtIndex = 0; uVirtIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uVirtIndex++)
-//		{
-//			g_pcPhysPixelsForVirtStrips[(uRealIndex * DF_MVDATA_NUM_VIRTUAL_STRIPS) + uVirtIndex] =
-//					g_pcPhysPixels[uRealIndex];
-//		}
-//	}
 	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
 	{
 		/* Every third strip is the first virtual strip of a physical strip */
 		uint8_t uOffset = (uStripIndex % 3U) * 50;
-		g_pcVirtPixels[uStripIndex] = new CVirtualLedStrip(uOffset, DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, &g_ycPhysPixelsForVirtStrips[uStripIndex]);
+		uint8_t uStripNumber = (uint8_t)(uStripIndex / 3U);
+		g_pcVirtPixels[uStripIndex] = new CVirtualLedStrip(uOffset, DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, uStripNumber, g_ypcPhysPixelsForVirtStrips[uStripIndex]);
 
 		for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 		{
