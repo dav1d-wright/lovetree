@@ -124,7 +124,7 @@ void setup(void)
 
 		for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 		{
-			g_ypcVirtPixels[uStripIndex] -> setPixelColor(uLoop, 0, 0, 0);
+			g_ypcVirtPixels[uStripIndex] -> setPixelColorRgb(uLoop, 0, 0, 0);
 			g_ypcVirtPixels[uStripIndex] -> show();
 		}
 

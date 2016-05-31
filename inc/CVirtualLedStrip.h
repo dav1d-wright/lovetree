@@ -34,6 +34,21 @@ typedef enum
 	eRunStateShootingStarNextStep
 }ERunStateShootingStar;
 
+/*!	\brief Shooting star programme states
+*/
+typedef enum
+{
+	/*!	\brief Idle state.*/
+	eRunStateStrobeIdle = 0,
+	/*!	\brief Waiting state.*/
+	eRunStateStrobeWaiting,
+	/*!	\brief Output on state.*/
+	eRunStateStrobeOn,
+	/*!	\brief Output off state.*/
+	eRunStateStrobeOff
+}ERunStateStrobe;
+
+
 /*----------------------------------------------------------------------------*/
 class CVirtualLedStrip
 {
@@ -44,12 +59,20 @@ private:
 	bool m_bIsRunning;
 	/*! \brief Length of this virtual strip (number of pixels). */
 	uint16_t m_uLength;
-	/*! \brief Current step in programme. */
-	uint16_t m_uCurrentStep;
-	/*! \brief Wait counter between current and next step of programme. */
-	uint32_t m_uWaitCounter;
+	/*! \brief Current step in shooting star programme. */
+	uint16_t m_uCurrentStepShootingStar;
+	/*! \brief Wait counter between current and next step of shooting star programme. */
+	uint32_t m_uWaitCounterShootingStar;
+	/*! \brief Current step in strobe programme. */
+	uint16_t m_uCurrentStepStrobe;
+	/*! \brief Wait counter between current and next step of strobe programme. */
+	uint32_t m_uWaitCounterStrobe;
 	/*! \brief Current running state in the shooting star programme. */
 	ERunStateShootingStar m_eRunStateShootingStar;
+	/*! \brief Current running state in the strobe programme. */
+	ERunStateStrobe m_eRunStateStrobe;
+	/*! \brief Last running state in the strobe programme. */
+	ERunStateStrobe m_eLastRunStatetrobe;
 	/*! \brief Strip number. */
 	uint8_t m_uStripNumber;
 	/*! \brief Hue percentage. */
@@ -73,14 +96,23 @@ public:
 	~CVirtualLedStrip(void);
 
 	/* Overriden members from Adafruit_NeoPixel */
-	/*!	\brief Set pixel colours.
+	/*!	\brief Set pixel colours using RGB.
 		\param auPixelNumber.
 		\param auRed.
 		\param auGreen.
 		\param auBlue.
 		\retval None.
 	*/
-    virtual void setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue);
+    virtual void setPixelColorRgb(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue);
+
+	/*!	\brief Set pixel colours using HSV.
+		\param auPixelNumber.
+		\param auHue.
+		\param auSaturation.
+		\param auValue.
+		\retval None.
+	*/
+    virtual void setPixelColorHsv(uint16_t auPixelNumber, uint8_t auHue, uint8_t auSaturation, uint8_t auValue);
 
 #ifdef DF_NEOPIXEL
 	/*!	\brief Set pixel colours.
@@ -125,7 +157,9 @@ public:
     virtual void show(void) const;
     virtual void begin(void) const;
 
-    ERunStateShootingStar getState(void);
+    ERunStateShootingStar getStateShootingStar(void);
+
+    ERunStateStrobe getStateStrobe(void);
     /* Programmes */
 	/*!	\brief Run shooting star programme.
 		\param None.
@@ -138,6 +172,12 @@ public:
 		\retval None.
 	*/
     virtual void handleShootingStarOutput(void);
+
+	/*!	\brief Run strobe programme.
+		\param None.
+		\retval None.
+	*/
+    virtual void runStrobe(void);
 
 	/*!	\brief Return whether or not a programme is running.
 		\param None.

@@ -111,11 +111,30 @@ CVirtualLedStrip::~CVirtualLedStrip(void)
 	Changes are only visible after calling CVirtualLedStrip::show().
 */
 /*----------------------------------------------------------------------------*/
-void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auHue, uint8_t auSaturation, uint8_t auValue)
+void CVirtualLedStrip::setPixelColorRgb(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue)
 {
 #ifdef DF_NEOPIXEL
 	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
 #elif defined(DF_FASTLED)
+	m_pcLedStrip[auPixelNumber + m_uOffset].red = auRed;
+	m_pcLedStrip[auPixelNumber + m_uOffset].green = auGreen;
+	m_pcLedStrip[auPixelNumber + m_uOffset].blue = auBlue;
+#endif
+}
+/*----------------------------------------------------------------------------*/
+/*!
+	\pre
+	Constructor has been called.
+
+	\post
+	Pixel colour is set.
+
+	Changes are only visible after calling CVirtualLedStrip::show().
+*/
+/*----------------------------------------------------------------------------*/
+void CVirtualLedStrip::setPixelColorHsv(uint16_t auPixelNumber, uint8_t auHue, uint8_t auSaturation, uint8_t auValue)
+{
+#ifdef DF_FASTLED
 	m_pcLedStrip[auPixelNumber + m_uOffset] = CHSV(auHue, auSaturation, auValue);
 #endif
 
@@ -204,9 +223,14 @@ void CVirtualLedStrip::begin(void) const
 #endif
 }
 
-ERunStateShootingStar CVirtualLedStrip::getState(void)
+ERunStateShootingStar CVirtualLedStrip::getStateShootingStar(void)
 {
 	return m_eRunStateShootingStar;
+}
+
+ERunStateStrobe CVirtualLedStrip::getStateStrobe(void)
+{
+	return m_eRunStateStrobe;
 }
 
 /*----------------------------------------------------------------------------*/
@@ -251,15 +275,15 @@ void CVirtualLedStrip::runShootingStar(void)
 		// do nothing
 		break;
 	case eRunStateShootingStarWaiting:
-		if(m_uWaitCounter > 0)
+		if(m_uWaitCounterShootingStar > 0)
 		{
 			/* This > 0 guard is mainly because erroneous flash reads could (and did) return 0,
-			 * which caused underflows. Usually m_uWaitCounter should only be zero AFTER this
+			 * which caused underflows. Usually m_uWaitCounterShootingStar should only be zero AFTER this
 			 * decrement, because it is only decremented here.
 			 */
-			m_uWaitCounter--;
+			m_uWaitCounterShootingStar--;
 		}
-		if(m_uWaitCounter == 0)
+		if(m_uWaitCounterShootingStar == 0)
 		{
 			m_eRunStateShootingStar = eRunStateShootingStarOutput;
 		}
@@ -270,13 +294,13 @@ void CVirtualLedStrip::runShootingStar(void)
 		m_eRunStateShootingStar = eRunStateShootingStarNextStep;
 		break;
 	case eRunStateShootingStarNextStep:
-		if(m_uCurrentStep < (DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW - 1))
+		if(m_uCurrentStepShootingStar < (DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP + DF_MVDATA_MAX_AFTERGLOW - 1))
 		{
 			/* if current step is not last step: wait until countdown has finished */
 			m_eRunStateShootingStar = eRunStateShootingStarWaiting;
 
-			m_uCurrentStep++;
-			m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays + m_uCurrentStep));
+			m_uCurrentStepShootingStar++;
+			m_uWaitCounterShootingStar = (uint32_t)(pgm_read_byte(g_uStepDelays + m_uCurrentStepShootingStar));
 		}
 		else
 		{
@@ -284,8 +308,8 @@ void CVirtualLedStrip::runShootingStar(void)
 			m_eRunStateShootingStar = eRunStateShootingStarIdle;
 
 			m_bIsRunning = false;
-			m_uCurrentStep = 0;
-			m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
+			m_uCurrentStepShootingStar = 0;
+			m_uWaitCounterShootingStar = (uint32_t)(pgm_read_byte(g_uStepDelays));
 		}
 		break;
 	default:
@@ -296,16 +320,76 @@ void CVirtualLedStrip::runShootingStar(void)
 
 void CVirtualLedStrip::handleShootingStarOutput(void)
 {
-	for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
+	for(uint8_t uLoop = 0; uLoop < m_uLength; uLoop++)
 	{
-		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStep] + uLoop);
+		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStepShootingStar] + uLoop);
 		uint8_t uHue =  (uint8_t)(((double) uLightIntensity) * m_dHuePercent);
 		uint8_t uSaturation =  (uint8_t)(((double) uLightIntensity) * m_dSaturationPercent);
 
-		this->setPixelColor(uLoop, uHue, uSaturation, uLightIntensity);
+		this->setPixelColorHsv(uLoop, uHue, uSaturation, uLightIntensity);
 	}
 
 	this->show(); // This sends the updated pixel color to the hardware.
+}
+
+void CVirtualLedStrip::runStrobe(void)
+{
+	switch(m_eRunStateStrobe)
+	{
+	case eRunStateStrobeIdle:
+
+		break;
+	case eRunStateStrobeWaiting:
+		if(m_uWaitCounterStrobe > 0)
+		{
+			/* This > 0 guard is mainly because erroneous flash reads could (and did) return 0,
+			 * which caused underflows. Usually m_uWaitCounterStrobe should only be zero AFTER this
+			 * decrement, because it is only decremented here.
+			 */
+			m_uWaitCounterStrobe--;
+		}
+		if(m_uWaitCounterStrobe == 0)
+		{
+			if(m_eLastRunStatetrobe == eRunStateStrobeOn)
+			{
+				m_eRunStateStrobe = eRunStateStrobeOff;
+			}
+			else if(m_eLastRunStatetrobe == eRunStateStrobeOff)
+			{
+				m_eRunStateStrobe = eRunStateStrobeOn;
+			}
+			m_eLastRunStatetrobe = eRunStateStrobeWaiting;
+		}
+
+		break;
+	case eRunStateStrobeOn:
+		for(uint8_t uLoop = 0; uLoop < m_uLength; uLoop++)
+		{
+			this->setPixelColorRgb(uLoop, 0xFFU, 0xFFU, 0xFFU);
+		}
+		this->show();
+
+		m_eRunStateStrobe = eRunStateStrobeWaiting;
+		m_eLastRunStatetrobe = eRunStateStrobeOn;
+		m_uWaitCounterStrobe = 0;
+
+		break;
+	case eRunStateStrobeOff:
+		for(uint8_t uLoop = 0; uLoop < m_uLength; uLoop++)
+		{
+			this->setPixelColorRgb(uLoop, 0, 0, 0);
+		}
+		this->show();
+
+		m_eRunStateStrobe = eRunStateStrobeWaiting;
+		m_eLastRunStatetrobe = eRunStateStrobeOff;
+		m_uWaitCounterStrobe = 0;
+
+		break;
+	default:
+		m_eRunStateStrobe = eRunStateStrobeIdle;
+		break;
+	}
 }
 
 bool CVirtualLedStrip::isRunning(void)
@@ -318,8 +402,8 @@ bool CVirtualLedStrip::startRunning(double auHuePercent, double auSaturationPerc
 	if(!m_bIsRunning)
 	{
 		m_bIsRunning = true;
-		m_uCurrentStep = 0;
-		m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
+		m_uCurrentStepShootingStar = 0;
+		m_uWaitCounterShootingStar = (uint32_t)(pgm_read_byte(g_uStepDelays));
 
 		m_dHuePercent = auHuePercent;
 		m_dSaturationPercent = auSaturationPercent;
