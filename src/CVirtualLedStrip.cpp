@@ -61,7 +61,7 @@ CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_
 CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, Adafruit_NeoPixel* apcLedStrip):
 #endif
 m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength),
-m_pcLedStrip(apcLedStrip), m_uStripNumber(auStripNumber)
+m_pcLedStrip(apcLedStrip), m_uStripNumber(auStripNumber), m_dHuePercent(1.0), m_dSaturationPercent(1.0)
 {
 	Serial.println("Constructor");
 }
@@ -111,14 +111,12 @@ CVirtualLedStrip::~CVirtualLedStrip(void)
 	Changes are only visible after calling CVirtualLedStrip::show().
 */
 /*----------------------------------------------------------------------------*/
-void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auRed, uint8_t auGreen, uint8_t auBlue)
+void CVirtualLedStrip::setPixelColor(uint16_t auPixelNumber, uint8_t auHue, uint8_t auSaturation, uint8_t auValue)
 {
 #ifdef DF_NEOPIXEL
 	m_pcLedStrip->setPixelColor(auPixelNumber + m_uOffset, auRed, auGreen, auBlue);
 #elif defined(DF_FASTLED)
-	m_pcLedStrip[auPixelNumber + m_uOffset].red = auRed;
-	m_pcLedStrip[auPixelNumber + m_uOffset].green = auGreen;
-	m_pcLedStrip[auPixelNumber + m_uOffset].blue = auBlue;
+	m_pcLedStrip[auPixelNumber + m_uOffset] = CHSV(auHue, auSaturation, auValue);
 #endif
 
 }
@@ -301,7 +299,10 @@ void CVirtualLedStrip::handleShootingStarOutput(void)
 	for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 	{
 		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStep] + uLoop);
-		this->setPixelColor(uLoop, uLightIntensity, uLightIntensity, uLightIntensity);
+		uint8_t uHue =  (uint8_t)(((double) uLightIntensity) * m_dHuePercent);
+		uint8_t uSaturation =  (uint8_t)(((double) uLightIntensity) * m_dSaturationPercent);
+
+		this->setPixelColor(uLoop, uHue, uSaturation, uLightIntensity);
 	}
 
 	this->show(); // This sends the updated pixel color to the hardware.
@@ -312,13 +313,16 @@ bool CVirtualLedStrip::isRunning(void)
 	return m_bIsRunning;
 }
 
-bool CVirtualLedStrip::startRunning(void)
+bool CVirtualLedStrip::startRunning(double auHuePercent, double auSaturationPercent)
 {
 	if(!m_bIsRunning)
 	{
 		m_bIsRunning = true;
 		m_uCurrentStep = 0;
 		m_uWaitCounter = (uint32_t)(pgm_read_byte(g_uStepDelays));
+
+		m_dHuePercent = auHuePercent;
+		m_dSaturationPercent = auSaturationPercent;
 
 		m_eRunStateShootingStar = eRunStateShootingStarWaiting;
 	}

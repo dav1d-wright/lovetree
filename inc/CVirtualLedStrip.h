@@ -48,8 +48,14 @@ private:
 	uint16_t m_uCurrentStep;
 	/*! \brief Wait counter between current and next step of programme. */
 	uint32_t m_uWaitCounter;
+	/*! \brief Current running state in the shooting star programme. */
 	ERunStateShootingStar m_eRunStateShootingStar;
+	/*! \brief Strip number. */
 	uint8_t m_uStripNumber;
+	/*! \brief Hue percentage. */
+	double m_dHuePercent;
+	/*! \brief Saturation percentage. */
+	double m_dSaturationPercent;
 #ifdef DF_FASTLED
 	CRGB* m_pcLedStrip;
 #endif
@@ -143,7 +149,7 @@ public:
 		\param None.
 		\retval None.
 	*/
-    virtual bool startRunning(void);
+    virtual bool startRunning(double auHuePercent, double auSaturationPercent);
 };
 
 

@@ -184,7 +184,9 @@ void handleLedStripTask(void* apvLedStrip)
 			uint8_t uRand = random(100);
 			if(uRand < 10)
 			{
-				pcLedStrip -> startRunning();
+				double dHuePercent = ((double)random(100))/100.0;
+				double dSaturationPercent = ((double)random(100))/100.0;
+				pcLedStrip -> startRunning(dHuePercent, dSaturationPercent);
 			}
 		}
 		pcLedStrip -> runShootingStar();
