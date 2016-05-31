@@ -23,12 +23,12 @@
 /*----------------------------------------------------------------------------*/
 /* defines */
 /*----------------------------------------------------------------------------*/
-#define DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP 50U
-#define DF_MVDATA_NUM_LEDS_PER_REAL_STRIP 150U
-#define DF_MVDATA_MAX_AFTERGLOW 20U
-#define DF_MVDATA_NUM_VIRTUAL_STRIPS 3U
-#define DF_MVDATA_NUM_REAL_STRIPS 1U
-#define DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP (DF_MVDATA_NUM_VIRTUAL_STRIPS/DF_MVDATA_NUM_REAL_STRIPS)
+#define DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP 			50U
+#define DF_MVDATA_NUM_LEDS_PER_REAL_STRIP 				150U
+#define DF_MVDATA_MAX_AFTERGLOW 						20U
+#define DF_MVDATA_NUM_REAL_STRIPS 						4U
+#define DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP 	3U
+#define DF_MVDATA_NUM_VIRTUAL_STRIPS 					(DF_MVDATA_NUM_REAL_STRIPS * DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP)
 
 /*----------------------------------------------------------------------------*/
 /*!	\brief Light intensity matrix. The steps increase with increasing x index. The LED pixels increase with increasing y index.

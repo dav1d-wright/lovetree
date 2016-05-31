@@ -21,8 +21,7 @@
 #include <MoveData.h>
 #ifdef DF_FASTLED
 #include <FastLED.h>
-#endif
-#ifdef DF_NEOPIXEL
+#elif defined(DF_NEOPIXEL)
 #include <Adafruit_NeoPixel.h>
 #endif
 #include <CVirtualLedStrip.h>

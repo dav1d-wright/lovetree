@@ -61,6 +61,7 @@
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_AVR"/>
 								</option>
 								<option id="de.innot.avreclipse.compiler.option.otherflags.451457852" name="Other flags" superClass="de.innot.avreclipse.compiler.option.otherflags" value="-lstdc++" valueType="string"/>
+								<option id="de.innot.avreclipse.compiler.option.verbose.609086241" superClass="de.innot.avreclipse.compiler.option.verbose" value="true" valueType="boolean"/>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.767881170" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.cppcompiler.app.debug.734057982" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.debug">
@@ -92,6 +93,7 @@
 								</option>
 								<option id="de.innot.avreclipse.cppcompiler.option.std.1044821991" name="Language Standard" superClass="de.innot.avreclipse.cppcompiler.option.std" value="de.innot.avreclipse.cppcompiler.option.std.ansi" valueType="enumerated"/>
 								<option id="de.innot.avreclipse.cppcompiler.option.otherflags.1690126633" name="Other flags" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" value="-lstdc++" valueType="string"/>
+								<option id="de.innot.avreclipse.cppcompiler.option.verbose.1333566573" superClass="de.innot.avreclipse.cppcompiler.option.verbose" value="true" valueType="boolean"/>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.520267544" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.debug.1763161764" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.debug"/>
@@ -366,6 +368,8 @@
 									<listOptionValue builtIn="false" value="ARDUINO_AVR_MEGA2560"/>
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_AVR"/>
 								</option>
+								<option id="de.innot.avreclipse.compiler.option.otherflags.1964720884" superClass="de.innot.avreclipse.compiler.option.otherflags" value="-lstdc++" valueType="string"/>
+								<option id="de.innot.avreclipse.compiler.option.verbose.2047385436" superClass="de.innot.avreclipse.compiler.option.verbose" value="true" valueType="boolean"/>
 								<inputType id="de.innot.avreclipse.compiler.winavr.input.624482508" name="C Source Files" superClass="de.innot.avreclipse.compiler.winavr.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.cppcompiler.app.release.326126953" name="AVR C++ Compiler" superClass="de.innot.avreclipse.tool.cppcompiler.app.release">
@@ -397,6 +401,8 @@
 									<listOptionValue builtIn="false" value="ARDUINO_ARCH_AVR"/>
 									<listOptionValue builtIn="false" value="ARDUINO_AVR_MEGA2560"/>
 								</option>
+								<option id="de.innot.avreclipse.cppcompiler.option.otherflags.55160724" superClass="de.innot.avreclipse.cppcompiler.option.otherflags" value="-lstdc++" valueType="string"/>
+								<option id="de.innot.avreclipse.cppcompiler.option.verbose.697035579" superClass="de.innot.avreclipse.cppcompiler.option.verbose" value="true" valueType="boolean"/>
 								<inputType id="de.innot.avreclipse.cppcompiler.input.1034818864" superClass="de.innot.avreclipse.cppcompiler.input"/>
 							</tool>
 							<tool id="de.innot.avreclipse.tool.linker.winavr.app.release.631620215" name="AVR C Linker" superClass="de.innot.avreclipse.tool.linker.winavr.app.release"/>
