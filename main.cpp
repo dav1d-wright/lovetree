@@ -38,9 +38,9 @@
 /*----------------------------------------------------------------------------*/
 #ifdef DF_FASTLED
 #define DF_PIN_STRIP0 6U
-#define DF_PIN_STRIP1 9U
-#define DF_PIN_STRIP2 10U
-#define DF_PIN_STRIP3 11U
+#define DF_PIN_STRIP1 8U
+#define DF_PIN_STRIP2 4U
+#define DF_PIN_STRIP3 10U
 #endif
 /*----------------------------------------------------------------------------*/
 /* forward declarations */
@@ -97,23 +97,39 @@ void setup(void)
 		FastLED.addLeds<NEOPIXEL, DF_PIN_STRIP0>(g_ycPhysPixels[0], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
 		FastLED.addLeds<NEOPIXEL, DF_PIN_STRIP1>(g_ycPhysPixels[1], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
 		FastLED.addLeds<NEOPIXEL, DF_PIN_STRIP2>(g_ycPhysPixels[2], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
-		FastLED.addLeds<NEOPIXEL, DF_PIN_STRIP3>(g_ycPhysPixels[3], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
+//		FastLED.addLeds<NEOPIXEL, DF_PIN_STRIP3>(g_ycPhysPixels[3], DF_MVDATA_NUM_LEDS_PER_REAL_STRIP);
 #endif
 
-	for(uint8_t uRealIndex = 0; uRealIndex < DF_MVDATA_NUM_REAL_STRIPS; uRealIndex++)
-	{
-		for(uint8_t uVirtIndex = 0; uVirtIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uVirtIndex++)
-		{
+
 #ifdef DF_NEOPIXEL
-			g_ypcPhysPixelsForVirtStrips[(uRealIndex * DF_MVDATA_NUM_VIRTUAL_STRIPS) + uVirtIndex] =
-					g_ypcPhysPixels[uRealIndex];
+		g_ypcPhysPixelsForVirtStrips[0] = g_ypcPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[1] = g_ypcPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[2] = g_ypcPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[3] = g_ypcPhysPixels[1];
+		g_ypcPhysPixelsForVirtStrips[4] = g_ypcPhysPixels[1];
+		g_ypcPhysPixelsForVirtStrips[5] = g_ypcPhysPixels[1];
+		g_ypcPhysPixelsForVirtStrips[6] = g_ypcPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[7] = g_ypcPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[8] = g_ypcPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[9] = g_ypcPhysPixels[3];
+		g_ypcPhysPixelsForVirtStrips[10] = g_ypcPhysPixels[3];
+		g_ypcPhysPixelsForVirtStrips[11] = g_ypcPhysPixels[3];
 #endif
 #ifdef DF_FASTLED
-			g_ypcPhysPixelsForVirtStrips[(uRealIndex * DF_MVDATA_NUM_VIRTUAL_STRIPS) + uVirtIndex] =
-					g_ycPhysPixels[uRealIndex];
+		g_ypcPhysPixelsForVirtStrips[0] = g_ycPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[1] = g_ycPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[2] = g_ycPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[3] = g_ycPhysPixels[1];
+		g_ypcPhysPixelsForVirtStrips[4] = g_ycPhysPixels[1];
+		g_ypcPhysPixelsForVirtStrips[5] = g_ycPhysPixels[1];
+		g_ypcPhysPixelsForVirtStrips[6] = g_ycPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[7] = g_ycPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[8] = g_ycPhysPixels[2];
+//		g_ypcPhysPixelsForVirtStrips[9] = g_ycPhysPixels[3];
+//		g_ypcPhysPixelsForVirtStrips[10] = g_ycPhysPixels[3];
+//		g_ypcPhysPixelsForVirtStrips[11] = g_ycPhysPixels[3];
 #endif
-		}
-	}
+
 
 	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
 	{
@@ -124,7 +140,7 @@ void setup(void)
 
 		for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
 		{
-			g_ypcVirtPixels[uStripIndex] -> setPixelColorRgb(uLoop, 0, 0, 0);
+			g_ypcVirtPixels[uStripIndex] -> setPixelColorRgb(uLoop, 0xff, 0xff, 0xff);
 			g_ypcVirtPixels[uStripIndex] -> show();
 		}
 
@@ -137,11 +153,10 @@ void setup(void)
 
 		 // This sends the updated pixel color to the hardware.
 	}
-
 	// seed with random analogue noise from unconnected input
 	randomSeed(analogRead(0));
 
-	delay(1000);
+	delay(10000);
 
 	/* Setup tasks */
 	Serial.println("Hello world from setup!");
@@ -184,8 +199,16 @@ void handleLedStripTask(void* apvLedStrip)
 			uint8_t uRand = random(100);
 			if(uRand < 10)
 			{
-				double dHuePercent = ((double)random(100))/100.0;
-				double dSaturationPercent = ((double)random(100))/100.0;
+				double dSaturationPercent;
+				double dHuePercent = 1.0;//((double)random(100))/100.0;
+				if(random(100) > 50)
+				{
+					dSaturationPercent = 1.0;
+				}
+				else
+				{
+					dSaturationPercent = 0.0;
+				}
 				pcLedStrip -> startRunning(dHuePercent, dSaturationPercent);
 			}
 		}
