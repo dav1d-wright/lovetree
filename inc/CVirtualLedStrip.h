@@ -73,8 +73,10 @@ private:
 	ERunStateStrobe m_eRunStateStrobe;
 	/*! \brief Last running state in the strobe programme. */
 	ERunStateStrobe m_eLastRunStatetrobe;
-	/*! \brief Strip number. */
-	uint8_t m_uStripNumber;
+	/*! \brief Strip number (physical). */
+	uint8_t m_uRealStripNumber;
+	/*! \brief Strip number (virtual). */
+	uint8_t m_uVirtStripNumber;
 	/*! \brief Hue percentage. */
 	double m_dHuePercent;
 	/*! \brief Saturation percentage. */
@@ -87,10 +89,10 @@ private:
 #endif
 public:
 #ifdef DF_FASTLED
-	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, CRGB* apcLedStrip);
+	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auRealStripNumber, uint8_t auVirtStripNumber, CRGB* apcLedStrip);
 #endif
 #ifdef DF_NEOPIXEL
-	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, Adafruit_NeoPixel* apcLedStrip);
+	CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auRealStripNumber, uint8_t auVirtStripNumber, Adafruit_NeoPixel* apcLedStrip);
 #endif
 	CVirtualLedStrip(CVirtualLedStrip& acLedStrip);
 	~CVirtualLedStrip(void);
@@ -189,7 +191,11 @@ public:
 		\param None.
 		\retval None.
 	*/
-    virtual bool startRunning(double auHuePercent, double auSaturationPercent);
+    virtual bool startRunning(double adHuePercent, double adSaturationPercent);
+
+    virtual uint8_t getRealStripIndex(void);
+
+    virtual uint8_t getVirtStripIndex(void);
 };
 
 

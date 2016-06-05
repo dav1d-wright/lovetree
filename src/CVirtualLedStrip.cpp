@@ -56,14 +56,15 @@ using namespace std;
 */
 /*----------------------------------------------------------------------------*/
 #ifdef DF_FASTLED
-CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, CRGB* apcLedStrip):
+CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auRealStripNumber, uint8_t auVirtStripNumber, CRGB* apcLedStrip):
 #elif defined(DF_NEOPIXEL)
-CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auStripNumber, Adafruit_NeoPixel* apcLedStrip):
+CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auRealStripNumber, uint8_t auVirtStripNumber, Adafruit_NeoPixel* apcLedStrip):
 #endif
 m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength),
-m_pcLedStrip(apcLedStrip), m_uStripNumber(auStripNumber), m_dHuePercent(1.0), m_dSaturationPercent(1.0)
+m_pcLedStrip(apcLedStrip), m_uRealStripNumber(auRealStripNumber), m_uVirtStripNumber(auVirtStripNumber), m_dHuePercent(1.0), m_dSaturationPercent(1.0)
 {
-	Serial.println("Constructor");
+	Serial.print("C");
+	Serial.println(m_uVirtStripNumber);
 }
 
 /*----------------------------------------------------------------------------*/
@@ -212,7 +213,7 @@ void CVirtualLedStrip::show(void) const
 #ifdef DF_NEOPIXEL
 	m_pcLedStrip->show();
 #elif defined(DF_FASTLED)
-	FastLED[m_uStripNumber].showLeds(0xFFU);
+	FastLED[m_uRealStripNumber].showLeds(0xFFU);
 #endif
 }
 
@@ -268,7 +269,6 @@ uint32_t CVirtualLedStrip::getPixelColor(uint16_t auPixelNumber) const
 /*----------------------------------------------------------------------------*/
 void CVirtualLedStrip::runShootingStar(void)
 {
-
 	switch(m_eRunStateShootingStar)
 	{
 	case eRunStateShootingStarIdle:
@@ -287,7 +287,6 @@ void CVirtualLedStrip::runShootingStar(void)
 		{
 			m_eRunStateShootingStar = eRunStateShootingStarOutput;
 		}
-
 		break;
 	case eRunStateShootingStarOutput:
 		this->handleShootingStarOutput();
@@ -397,7 +396,7 @@ bool CVirtualLedStrip::isRunning(void)
 	return m_bIsRunning;
 }
 
-bool CVirtualLedStrip::startRunning(double auHuePercent, double auSaturationPercent)
+bool CVirtualLedStrip::startRunning(double adHuePercent, double adSaturationPercent)
 {
 	if(!m_bIsRunning)
 	{
@@ -405,9 +404,20 @@ bool CVirtualLedStrip::startRunning(double auHuePercent, double auSaturationPerc
 		m_uCurrentStepShootingStar = 0;
 		m_uWaitCounterShootingStar = (uint32_t)(pgm_read_byte(g_uStepDelays));
 
-		m_dHuePercent = auHuePercent;
-		m_dSaturationPercent = auSaturationPercent;
+		m_dHuePercent = adHuePercent;
+		m_dSaturationPercent = adSaturationPercent;
 
 		m_eRunStateShootingStar = eRunStateShootingStarWaiting;
 	}
+}
+
+
+uint8_t CVirtualLedStrip::getRealStripIndex(void)
+{
+	return m_uRealStripNumber;
+}
+
+uint8_t CVirtualLedStrip::getVirtStripIndex(void)
+{
+	return m_uVirtStripNumber;
 }

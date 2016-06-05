@@ -18,7 +18,7 @@
 
 # 4 LED strips with 30 LEDs/m are divided by 3 --> 12 LED strips of 5/3m length each
 numLeds = 30 * 5/3;
-maxAfterGlow = 20;
+maxAfterGlow = 45;
 afterGlow = floor(linspace(2, maxAfterGlow, numLeds + maxAfterGlow));
 afterGlow(1) = 0;
 afterGlow(2) = 1;
@@ -36,6 +36,11 @@ end
 for stepIndex = 1 : numLeds + maxAfterGlow
 	stepMatrix(stepIndex, :) = appendAfterGlow(stepMatrix(stepIndex, :), stepIndex, afterGlow(stepIndex));
 end
+
+weightMatrix = stepMatrix > 0;
+stepMatrix = stepMatrix - (10 .* (rand(size(stepMatrix)) - 0.5) .* (weightMatrix));
+stepMatrix(stepMatrix < 0) = 0;
+stepMatrix(stepMatrix > 255) = 255;
 stepMatrix = round(stepMatrix);
 printCStyle(stepMatrix, maxAfterGlow, numLeds, stepDelay);
 
