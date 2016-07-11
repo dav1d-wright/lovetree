@@ -61,7 +61,7 @@ CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_
 CVirtualLedStrip::CVirtualLedStrip(uint16_t auOffset, uint16_t auLength,  uint8_t auRealStripNumber, uint8_t auVirtStripNumber, Adafruit_NeoPixel* apcLedStrip):
 #endif
 m_bIsRunning(false), m_eRunStateShootingStar(eRunStateShootingStarIdle), m_uOffset(auOffset), m_uLength(auLength),
-m_pcLedStrip(apcLedStrip), m_uRealStripNumber(auRealStripNumber), m_uVirtStripNumber(auVirtStripNumber), m_dHuePercent(1.0), m_dSaturationPercent(1.0)
+m_pcLedStrip(apcLedStrip), m_uRealStripNumber(auRealStripNumber), m_uVirtStripNumber(auVirtStripNumber), m_uHue(0), m_dSaturationPercent(1.0)
 {
 	Serial.print("C");
 	Serial.println(m_uVirtStripNumber);
@@ -322,8 +322,8 @@ void CVirtualLedStrip::handleShootingStarOutput(void)
 	for(uint8_t uLoop = 0; uLoop < m_uLength; uLoop++)
 	{
 		uint8_t uLightIntensity = pgm_read_byte(g_uLightIntensityMat[m_uCurrentStepShootingStar] + uLoop);
-		uint8_t uHue =  (uint8_t)(((double) uLightIntensity) * m_dHuePercent);
-		uint8_t uSaturation =  (uint8_t)(((double) uLightIntensity) * m_dSaturationPercent);
+		uint8_t uHue =  m_uHue + (0.2 * (0xFF - uLightIntensity));
+		uint8_t uSaturation =  0xFF;
 
 		this->setPixelColorHsv(uLoop, uHue, uSaturation, uLightIntensity);
 	}
@@ -396,7 +396,7 @@ bool CVirtualLedStrip::isRunning(void)
 	return m_bIsRunning;
 }
 
-bool CVirtualLedStrip::startRunning(double adHuePercent, double adSaturationPercent)
+bool CVirtualLedStrip::startRunning(uint8_t auHue, double adSaturationPercent)
 {
 	if(!m_bIsRunning)
 	{
@@ -404,7 +404,7 @@ bool CVirtualLedStrip::startRunning(double adHuePercent, double adSaturationPerc
 		m_uCurrentStepShootingStar = 0;
 		m_uWaitCounterShootingStar = (uint32_t)(pgm_read_byte(g_uStepDelays));
 
-		m_dHuePercent = adHuePercent;
+		m_uHue = auHue;
 		m_dSaturationPercent = adSaturationPercent;
 
 		m_eRunStateShootingStar = eRunStateShootingStarWaiting;

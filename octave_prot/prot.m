@@ -17,8 +17,9 @@
 ## Created: 2016-05-18
 
 # 4 LED strips with 30 LEDs/m are divided by 3 --> 12 LED strips of 5/3m length each
-numLeds = 30 * 5/3;
-maxAfterGlow = 45;
+virtStripsPerRealStrip = 2;
+numLeds = 30 * 5/virtStripsPerRealStrip;
+maxAfterGlow = 55;
 afterGlow = floor(linspace(2, maxAfterGlow, numLeds + maxAfterGlow));
 afterGlow(1) = 0;
 afterGlow(2) = 1;
@@ -26,6 +27,9 @@ stepDelay = floor(linspace(100, 20, numLeds + maxAfterGlow));
 
 stepMatrix = zeros(numLeds + maxAfterGlow, numLeds + maxAfterGlow);
 stepMatrix(1,1) = 0xFF;
+#filterSize = 3;
+#filterMatrix = ones(filterSize)./(filterSize^2);
+
 
 # First only shift the leading pixel. This should result in a diagonal matrix.
 for stepIndex = 1 : numLeds + maxAfterGlow
@@ -36,6 +40,11 @@ end
 for stepIndex = 1 : numLeds + maxAfterGlow
 	stepMatrix(stepIndex, :) = appendAfterGlow(stepMatrix(stepIndex, :), stepIndex, afterGlow(stepIndex));
 end
+
+# filter the matrix
+#stepMatrix = convn(stepMatrix, filterMatrix, "same");
+#maxStepMatrix = max(max(stepMatrix));
+#stepMatrix = stepMatrix ./ maxStepMatrix * 255;
 
 weightMatrix = stepMatrix > 0;
 stepMatrix = stepMatrix - (10 .* (rand(size(stepMatrix)) - 0.5) .* (weightMatrix));

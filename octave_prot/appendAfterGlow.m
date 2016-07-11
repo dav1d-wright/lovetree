@@ -20,7 +20,7 @@ function outArr = appendAfterGlow (inArr, stepIndex, afterGlowLen)
 	if(afterGlowLen > 0)
 		slope = 1/afterGlowLen;
 		outArr = zeros(size(inArr));
-		for index = 0 : afterGlowLen
+		for index = 1 : afterGlowLen
 			outArr(index + stepIndex - afterGlowLen) = slope * index * 0xFF;
 		end
 	else

@@ -37,12 +37,13 @@
 /* defines */
 /*----------------------------------------------------------------------------*/
 #ifdef DF_FASTLED
-#define DF_PIN_STRIP0 6U
-#define DF_PIN_STRIP1 8U
-#define DF_PIN_STRIP2 4U
+#define DF_PIN_STRIP0 4U
+#define DF_PIN_STRIP1 6U
+#define DF_PIN_STRIP2 8U
 #define DF_PIN_STRIP3 10U
 #endif
 #define DF_PROBABILITY_COUNTER_MAX 0x4096UL
+#define DF_HUE_COUNTER_MAX 0x3500UL
 #define DF_PROBABILITY_NOMINAL 30U
 #define DF_TASK_WAIT 30U
 #define DF_2_PI 6.28
@@ -50,7 +51,9 @@
 /* forward declarations */
 /*----------------------------------------------------------------------------*/
 void handleLedStripTask(void* apvLedStrip);
-int16_t getStartVariance(uint8_t auStripIndex);
+int16_t getStartVariance(void);
+uint8_t getHue(void);
+
 /*----------------------------------------------------------------------------*/
 /* globals */
 /*----------------------------------------------------------------------------*/
@@ -71,6 +74,8 @@ const uint8_t g_uPins[DF_MVDATA_NUM_REAL_STRIPS] = {6U, 9U, 10U, 11U};
 uint16_t g_uDelayVal = 500U;
 /*! \brief Probability variance counter */
 uint32_t g_uProbabilityCounter;
+/*! \brief Hue counter */
+uint32_t g_uHueCounter;
 /*! \brief task handles */
 //TaskHandle_t g_pvTaskHandles[DF_MVDATA_NUM_VIRTUAL_STRIPS];
 /*! \brief Time when task was last called */
@@ -127,24 +132,24 @@ void setup(void)
 #ifdef DF_FASTLED
 		g_ypcPhysPixelsForVirtStrips[0] = g_ycPhysPixels[0];
 		g_ypcPhysPixelsForVirtStrips[1] = g_ycPhysPixels[0];
-		g_ypcPhysPixelsForVirtStrips[2] = g_ycPhysPixels[0];
+		g_ypcPhysPixelsForVirtStrips[2] = g_ycPhysPixels[1];
 		g_ypcPhysPixelsForVirtStrips[3] = g_ycPhysPixels[1];
-		g_ypcPhysPixelsForVirtStrips[4] = g_ycPhysPixels[1];
-		g_ypcPhysPixelsForVirtStrips[5] = g_ycPhysPixels[1];
-		g_ypcPhysPixelsForVirtStrips[6] = g_ycPhysPixels[2];
-		g_ypcPhysPixelsForVirtStrips[7] = g_ycPhysPixels[2];
-		g_ypcPhysPixelsForVirtStrips[8] = g_ycPhysPixels[2];
-		g_ypcPhysPixelsForVirtStrips[9] = g_ycPhysPixels[3];
-		g_ypcPhysPixelsForVirtStrips[10] = g_ycPhysPixels[3];
-		g_ypcPhysPixelsForVirtStrips[11] = g_ycPhysPixels[3];
+		g_ypcPhysPixelsForVirtStrips[4] = g_ycPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[5] = g_ycPhysPixels[2];
+		g_ypcPhysPixelsForVirtStrips[6] = g_ycPhysPixels[3];
+		g_ypcPhysPixelsForVirtStrips[7] = g_ycPhysPixels[3];
+//		g_ypcPhysPixelsForVirtStrips[8] = g_ycPhysPixels[2];
+//		g_ypcPhysPixelsForVirtStrips[9] = g_ycPhysPixels[3];
+//		g_ypcPhysPixelsForVirtStrips[10] = g_ycPhysPixels[3];
+//		g_ypcPhysPixelsForVirtStrips[11] = g_ycPhysPixels[3];
 #endif
 
 
 	for(uint8_t uStripIndex = 0; uStripIndex < DF_MVDATA_NUM_VIRTUAL_STRIPS; uStripIndex++)
 	{
 		/* Every third strip is the first virtual strip of a physical strip */
-		uint8_t uOffset = (uStripIndex % 3U) * DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP;
-		uint8_t uRealStripNumber = (uint8_t)(uStripIndex / 3U);
+		uint8_t uOffset = (uStripIndex % DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP) * DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP;
+		uint8_t uRealStripNumber = (uint8_t)(uStripIndex / DF_MVDATA_NUM_VIRTUAL_STRIPS_PER_REAL_STRIP);
 		g_ypcVirtPixels[uStripIndex] = new CVirtualLedStrip(uOffset, DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP, uRealStripNumber, uStripIndex, g_ypcPhysPixelsForVirtStrips[uStripIndex]);
 
 		for(uint8_t uLoop = 0; uLoop < DF_MVDATA_NUM_LEDS_PER_VIRTUAL_STRIP; uLoop++)
@@ -202,13 +207,20 @@ void loop(void)
 		{
 			if(uStripIndex == 0)
 			{
-				/* decrement probability counter for sinusodial behaviour of starting a new task */
+				/* decrement probability counter for sinusoidal behaviour of starting a new task */
 				if(g_uProbabilityCounter == 0)
 				{
 					g_uProbabilityCounter = DF_PROBABILITY_COUNTER_MAX;
 				}
 
 				g_uProbabilityCounter--;
+
+				if(g_uHueCounter == 0)
+				{
+					g_uHueCounter = DF_HUE_COUNTER_MAX;
+				}
+
+				g_uHueCounter--;
 			}
 
 			g_uLastCallTime[uStripIndex] = millis();
@@ -242,32 +254,25 @@ void handleLedStripTask(void* apvLedStrip)
 		if(!(pcLedStrip -> isRunning()))
 		{
 			int16_t uRand = (int16_t)random(1000);
-			int16_t uProb = (((int16_t)(DF_PROBABILITY_NOMINAL)) + getStartVariance(uStripIndex));
+			int16_t uProb = (((int16_t)(DF_PROBABILITY_NOMINAL)) + getStartVariance());
 
-			if(uStripIndex == 0)
-			{
-				Serial.print(uProb);
-				Serial.print(" ");
-				Serial.println(uRand);
-			}
+//			if(uStripIndex == 0)
+//			{
+//				Serial.print(uProb);
+//				Serial.print(" ");
+//				Serial.println(uRand);
+//			}
 
 			if(uRand < uProb)
 			{
-				if(uStripIndex == 0)
-				{
-					Serial.println("S");
-				}
+//				if(uStripIndex == 0)
+//				{
+//					Serial.println("S");
+//				}
 				double dSaturationPercent;
-				double dHuePercent = ((double)random(50))/100.0;
-				if(random(100) > 15)
-				{
-					dSaturationPercent = 1.0;
-				}
-				else
-				{
-					dSaturationPercent = 0.0;
-				}
-				pcLedStrip -> startRunning(dHuePercent, dSaturationPercent);
+				uint8_t uHue = getHue();
+				dSaturationPercent = 0.0;
+				pcLedStrip -> startRunning(uHue, dSaturationPercent);
 			}
 		}
 		pcLedStrip -> runShootingStar();
@@ -276,7 +281,7 @@ void handleLedStripTask(void* apvLedStrip)
 //	}
 }
 
-int16_t getStartVariance(uint8_t auStripIndex)
+int16_t getStartVariance(void)
 {
 	int16_t iVariance = 0U;
 
@@ -284,4 +289,14 @@ int16_t getStartVariance(uint8_t auStripIndex)
 	iVariance = (int8_t)((double)DF_PROBABILITY_NOMINAL + 0.5) * sin(
 			((double)g_uProbabilityCounter) / ((double)DF_PROBABILITY_COUNTER_MAX) * DF_2_PI);
 	return iVariance;
+}
+
+uint8_t getHue(void)
+{
+	uint8_t uHue = 0U;
+
+	/* Amplitude = DF_PROBABILITY_NOMINAL + 2 so that we fall below 0 sometimes */
+	uHue = (int8_t)((double)0xFFU) * sin(((double)g_uHueCounter)
+			/ ((double)DF_HUE_COUNTER_MAX) * DF_2_PI);
+	return uHue;
 }

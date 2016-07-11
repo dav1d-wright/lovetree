@@ -77,8 +77,8 @@ private:
 	uint8_t m_uRealStripNumber;
 	/*! \brief Strip number (virtual). */
 	uint8_t m_uVirtStripNumber;
-	/*! \brief Hue percentage. */
-	double m_dHuePercent;
+	/*! \brief Hue. */
+	uint8_t m_uHue;
 	/*! \brief Saturation percentage. */
 	double m_dSaturationPercent;
 #ifdef DF_FASTLED
@@ -191,7 +191,7 @@ public:
 		\param None.
 		\retval None.
 	*/
-    virtual bool startRunning(double adHuePercent, double adSaturationPercent);
+    virtual bool startRunning(uint8_t auHue, double adSaturationPercent);
 
     virtual uint8_t getRealStripIndex(void);
 
